@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contadores</title>
+    <style>
+        body {
+            background-color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        .square-cell {
+            text-align: center;
+            vertical-align: middle;
+            width: 180px;
+            height: 180px;
+        }
+        .square {
+            width: 100%;
+            height: 70%;
+            cursor: pointer;
+        }
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .counters {
+            font-size: 12px;
+        }
+        .button {
+            background-color: #FF0000;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+        .team-table {
+            width: 50%;
+        }
+        .team-table th, .team-table td {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="beep" src="http://alayos.com/wp-content/uploads/2023/10/Pataco.mp3"></audio>
+    <table>
+        <tr>
+            <td class="square-cell">
+                <div class="title">IRLANDA</div>
+                <div class="square" style="background-color: #F39200;" onclick="updateCounts(0)"></div>
+                <div class="counters" id="countLeft0">9</div>
+                <div class="counters" id="countRight0">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">BÉLGICA</div>
+                <div class="square" style="background-color: #36A9E1;" onclick="updateCounts(1)"></div>
+                <div class="counters" id="countLeft1">9</div>
+                <div class="counters" id="countRight1">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">DINAMARCA</div>
+                <div class="square" style="background-color: #C9D400;" onclick="updateCounts(2)"></div>
+                <div class="counters" id="countLeft2">7</div>
+                <div class="counters" id="countRight2">0</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="square-cell">
+                <div class="title">SUIZA</div>
+                <div class="square" style="background-color: #ABB8DF;" onclick="updateCounts(3)"></div>
+                <div class="counters" id="countLeft3">9</div>
+                <div class="counters" id="countRight3">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">AUSTRIA</div>
+                <div class="square" style="background-color: #A4D6D4;" onclick="updateCounts(4)"></div>
+                <div class="counters" id="countLeft4">8</div>
+                <div class="counters" id="countRight4">0</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="square-cell">
+                <div class="title">ALEMANIA</div>
+                <div class="square" style="background-color: #A5D9E7;" onclick="updateCounts(5)"></div>
+                <div class="counters" id="countLeft5">8</div>
+                <div class="counters" id="countRight5">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">ITALIA</div>
+                <div class="square" style="background-color: #A3D0A3;" onclick="updateCounts(6)"></div>
+                <div class="counters" id="countLeft6">7</div>
+                <div class="counters" id="countRight6">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">INGLATERRA</div>
+                <div class="square" style="background-color: #F191A6;" onclick="updateCounts(7)"></div>
+                <div class="counters" id="countLeft7">7</div>
+                <div class="counters" id="countRight7">0</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="square-cell">
+                <div class="title">FRANCIA</div>
+                <div class="square" style="background-color: #FFD100;" onclick="updateCounts(8)"></div>
+                <div class="counters" id="countLeft8">9</div>
+                <div class="counters" id="countRight8">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">HOLANDA</div>
+                <div class="square" style="background-color: #83B4E2;" onclick="updateCounts(9)"></div>
+                <div class="counters" id="countLeft9">8</div>
+                <div class="counters" id="countRight9">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">EEUU</div>
+                <div class="square" style="background-color: #C7A970;" onclick="updateCounts(10)"></div>
+                <div class="counters" id="countLeft10">11</div>
+                <div class="counters" id="countRight10">0</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <button class="button" onclick="showResults()">FINAL</button>
+            </td>
+        </tr>
+    </table>
+
+    <div id="results" class="hidden">
+        <table class="team-table">
+            <tr>
+                <th>Equipo</th>
+                <th>Puntuación Final</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        var componentes = [9, 9, 7, 9, 8, 8, 7, 7, 9, 8, 11];
+        var leftCounts = [9, 9, 7, 9, 8, 8, 7, 7, 9, 8, 11];
+        var rightCounts = new Array(leftCounts.length).fill(0);
+
+        function updateCounts(index) {
+            if (leftCounts[index] > 0) {
+                var now = new Date();
+                var timElapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                leftCounts[index]--;
+
+                var currentRightCount = 86400 - timElapsed;
+                rightCounts[index] += currentRightCount;
+
+                document.getElementById('countLeft' + index).textContent = leftCounts[index];
+                document.getElementById('countRight' + index).textContent = rightCounts[index];
+
+                // Reproduce el sonido cuando se actualiza un contador
+                var audio = document.getElementById("beep");
+                audio.play();
+            }
+        }
+
+        function showResults() {
+            var teams = ["IRLANDA", "BÉLGICA", "DINAMARCA", "SUIZA", "AUSTRIA", "ALEMANIA", "ITALIA", "INGLATERRA", "FRANCIA", "HOLANDA", "EEUU"];
+            var teamScores = [];
+
+            for (var i = 0; i < teams.length; i++) {
+                teamScores.push(Math.floor(rightCounts[i] / componentes[i]));
+            }
+
+            var table = document.querySelector(".team-table");
+            table.innerHTML = '';
+
+            for (var i = 0; i < teams.length; i++) {
+                var row = table.insertRow(i);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+
+                cell1.innerHTML = teams[i];
+                cell2.innerHTML = teamScores[i];
+            }
+
+            document.getElementById('results').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
