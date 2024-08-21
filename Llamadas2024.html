@@ -49,7 +49,7 @@
             display: none;
         }
         .team-table {
-            width: 50%;
+            width: 25%;
         }
         .team-table th, .team-table td {
             padding: 5px;
@@ -150,7 +150,6 @@
     </div>
 
     <script>
-        var componentes = [9, 9, 7, 9, 8, 8, 7, 7, 9, 8, 10];
         var leftCounts = [9, 9, 7, 9, 8, 8, 7, 7, 9, 8, 10];
         var rightCounts = new Array(leftCounts.length).fill(0);
 
@@ -177,7 +176,7 @@
             var teamScores = [];
 
             for (var i = 0; i < teams.length; i++) {
-                teamScores.push(Math.floor(rightCounts[i] / componentes[i]));
+                teamScores.push(rightCounts[i]);
             }
 
             var table = document.querySelector(".team-table");
