@@ -160,6 +160,10 @@
       document.getElementById('countRight' + index).textContent = rightCounts[index];
 
       document.getElementById("beep").play();
+      // Vibración háptica si el dispositivo lo permite
+      if (navigator.vibrate) {
+          navigator.vibrate(100);
+        }
     }
   }
 
