@@ -27,6 +27,11 @@
       height: 70%;
       cursor: pointer;
     }
+    .square:active {
+  transform: scale(0.85);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
     .title {
       font-size: 18px;
       font-weight: bold;
@@ -45,6 +50,11 @@
       height: 80px;
       cursor: pointer;
     }
+    .button:active {
+  transform: scale(0.85);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
     .hidden {
       display: none;
     }
@@ -58,11 +68,6 @@
     .team-table th, .team-table td {
       padding: 5px;
     }
-    .button:active {
-  transform: scale(0.85);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
   </style>
 </head>
 <body>
