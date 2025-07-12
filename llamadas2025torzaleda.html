@@ -92,19 +92,19 @@
   <tr>
     <td class="square-cell">
       <div class="title">TÍO JACK</div>
-      <div class="square" style="background-color: #F39200;" onclick="updateCounts(0)"></div>
+      <div id="square0" class="square" style="background-color: #F39200;" onclick="updateCounts(0)"></div>
       <div class="counters" id="countLeft0">10</div>
       <div class="counters" id="countRight0">0</div>
     </td>
     <td class="square-cell">
       <div class="title">GIBBS</div>
-      <div class="square" style="background-color: #36A9E1;" onclick="updateCounts(1)"></div>
+      <div id="square1" class="square" style="background-color: #36A9E1;" onclick="updateCounts(1)"></div>
       <div class="counters" id="countLeft1">7</div>
       <div class="counters" id="countRight1">0</div>
     </td>
     <td class="square-cell">
       <div class="title">PATA PALO</div>
-      <div class="square" style="background-color: #C9D400;" onclick="updateCounts(2)"></div>
+      <div id="square2" class="square" style="background-color: #C9D400;" onclick="updateCounts(2)"></div>
       <div class="counters" id="countLeft2">7</div>
       <div class="counters" id="countRight2">0</div>
     </td>
@@ -112,14 +112,14 @@
   <tr>
     <td class="square-cell">
       <div class="title">W. TURNER</div>
-      <div class="square" style="background-color: #ABB8DF;" onclick="updateCounts(3)"></div>
+      <div id="square3" class="square" style="background-color: #ABB8DF;" onclick="updateCounts(3)"></div>
       <div class="counters" id="countLeft3">6</div>
       <div class="counters" id="countRight3">0</div>
     </td>
     <td class="square-cell"></td>
     <td class="square-cell">
       <div class="title">PERLA NEGRA</div>
-      <div class="square" style="background-color: #2C3E50;" onclick="updateCounts(7)"></div>
+      <div id="square7" class="square" style="background-color: #2C3E50;" onclick="updateCounts(7)"></div>
       <div class="counters" id="countLeft7">11</div>
       <div class="counters" id="countRight7">0</div>
     </td>
@@ -127,19 +127,19 @@
   <tr>
     <td class="square-cell">
       <div class="title">J. SPARROW</div>
-      <div class="square" style="background-color: #A3D0A3;" onclick="updateCounts(4)"></div>
+      <div id="square4" class="square" style="background-color: #A3D0A3;" onclick="updateCounts(4)"></div>
       <div class="counters" id="countLeft4">9</div>
       <div class="counters" id="countRight4">0</div>
     </td>
     <td class="square-cell">
       <div class="title">DAVY JONES</div>
-      <div class="square" style="background-color: #F191A6;" onclick="updateCounts(5)"></div>
+      <div id="square5" class="square" style="background-color: #F191A6;" onclick="updateCounts(5)"></div>
       <div class="counters" id="countLeft5">8</div>
       <div class="counters" id="countRight5">0</div>
     </td>
     <td class="square-cell">
       <div class="title">KRAKEN</div>
-      <div class="square" style="background-color: #FFD100;" onclick="updateCounts(6)"></div>
+      <div id="square6" class="square" style="background-color: #FFD100;" onclick="updateCounts(6)"></div>
       <div class="counters" id="countLeft6">8</div>
       <div class="counters" id="countRight6">0</div>
     </td>
@@ -165,24 +165,27 @@
   var rightCounts = new Array(leftCounts.length).fill(0);
 
   function updateCounts(index) {
-    if (leftCounts[index] > 0) {
-        var now = new Date();
-        var timElapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-        leftCounts[index]--;
+  if (leftCounts[index] > 0) {
+    var now = new Date();
+    var timeElapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    leftCounts[index]--;
 
-        var currentRightCount = 86400 - timElapsed;
-        rightCounts[index] += currentRightCount;
+    var currentRightCount = 86400 - timeElapsed;
+    rightCounts[index] += currentRightCount;
 
-        document.getElementById('countLeft' + index).textContent = leftCounts[index];
-        document.getElementById('countRight' + index).textContent = rightCounts[index];
+    document.getElementById('countLeft' + index).textContent = leftCounts[index];
+    document.getElementById('countRight' + index).textContent = rightCounts[index];
 
-        document.getElementById("beep").play();
+    // Efecto visual (flash temporal)
+    const button = document.getElementById('square' + index);
+    button.classList.add('pressed');
+    setTimeout(() => {
+      button.classList.remove('pressed');
+    }, 150);
 
-        // ✨ Efecto visual solo si se ha sumado
-        const square = document.querySelectorAll(".square")[index];
-        square.classList.add("pressed");
-        setTimeout(() => square.classList.remove("pressed"), 150);
-    }
+    // Sonido
+    document.getElementById("beep").play();
+  }
 }
 
   function showResults() {
