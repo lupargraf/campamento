@@ -49,8 +49,12 @@
       display: none;
     }
     .team-table {
-      width: 50%;
-    }
+    width: 100%;
+    max-width: 600px; /* opcional, para limitar tamaño en pantallas grandes */
+    margin: 0 auto;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
     .team-table th, .team-table td {
       padding: 5px;
     }
