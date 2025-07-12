@@ -117,7 +117,7 @@
     <td></td>
     <td class="square-cell">
       <div class="title">PERLA NEGRA</div>
-      <div class="square" style="background-color: #ABB8DF;" onclick="updateCounts(7)"></div>
+      <div class="square" style="background-color: #444;" onclick="updateCounts(7)"></div>
       <div class="counters" id="countLeft7">11</div>
       <div class="counters" id="countRight7">0</div>
     </td>
@@ -161,7 +161,6 @@
 
   function showResults() {
   var teams = ["TÍO JACK", "GIBBS", "PATA PALO", "W. TURNER", "J. SPARROW", "DAVY JONES", "KRAKEN", "PERLA NEGRA"];
-  var componentes = [1, 1, 1, 1, 1, 1, 1, 1]; // Modifica si hay equipos con más miembros
 
   var table = document.querySelector(".team-table");
   
@@ -173,7 +172,7 @@
   for (var i = 0; i < teams.length; i++) {
     var row = table.insertRow();
     row.insertCell(0).textContent = teams[i];
-    row.insertCell(1).textContent = Math.floor(rightCounts[i] / componentes[i]);
+    row.insertCell(1).textContent = Math.floor(rightCounts[i]);
   }
 
   document.getElementById('results').classList.remove('hidden');
