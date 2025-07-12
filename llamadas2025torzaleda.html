@@ -160,20 +160,24 @@
   }
 
   function showResults() {
-    var teams = ["TÍO JACK", "GIBBS", "PATA PALO", "W. TURNER", "J. SPARROW", "DAVY JONES", "KRAKEN", "PERLA NEGRA"];
-    var componentes = [1, 1, 1, 1, 1, 1, 1, 1]; // Suplanta con los valores reales si hay más de un miembro por equipo
+  var teams = ["TÍO JACK", "GIBBS", "PATA PALO", "W. TURNER", "J. SPARROW", "DAVY JONES", "KRAKEN", "PERLA NEGRA"];
+  var componentes = [1, 1, 1, 1, 1, 1, 1, 1]; // Modifica si hay equipos con más miembros
 
-    var table = document.querySelector(".team-table");
-    table.innerHTML = "<tr><th>Equipo</th><th>Puntuación Final</th></tr>";
-
-    for (var i = 0; i < teams.length; i++) {
-      var row = table.insertRow();
-      row.insertCell(0).innerHTML = teams[i];
-      row.insertCell(1).innerHTML = Math.floor(rightCounts[i] / componentes[i]);
-    }
-
-    document.getElementById('results').classList.remove('hidden');
+  var table = document.querySelector(".team-table");
+  
+  // Elimina las filas anteriores excepto la cabecera
+  while (table.rows.length > 1) {
+    table.deleteRow(1);
   }
+
+  for (var i = 0; i < teams.length; i++) {
+    var row = table.insertRow();
+    row.insertCell(0).textContent = teams[i];
+    row.insertCell(1).textContent = Math.floor(rightCounts[i] / componentes[i]);
+  }
+
+  document.getElementById('results').classList.remove('hidden');
+}
 </script>
 </body>
 </html>
