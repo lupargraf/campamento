@@ -12,6 +12,10 @@
       padding: 0;
       font-family: 'Arial', sans-serif;
     }
+    body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
     table {
       border-collapse: collapse;
       margin: 0 auto;
@@ -191,6 +195,10 @@
 
   document.getElementById('results').classList.remove('hidden');
 }
+</script>
+  <script>
+  // Truco para forzar a Safari a reconocer :active en elementos que no son enlaces ni botones
+  document.addEventListener("touchstart", function() {}, true);
 </script>
 </body>
 </html>
