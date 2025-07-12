@@ -31,7 +31,7 @@
       height: 70%;
       cursor: pointer;
     }
-    .square:active {
+    .square:pressed {
   transform: scale(0.85);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
   transition: transform 0.1s, box-shadow 0.1s;
@@ -163,19 +163,24 @@
 
   function updateCounts(index) {
     if (leftCounts[index] > 0) {
-      var now = new Date();
-      var timElapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-      leftCounts[index]--;
+        var now = new Date();
+        var timElapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+        leftCounts[index]--;
 
-      var currentRightCount = 86400 - timElapsed;
-      rightCounts[index] += currentRightCount;
+        var currentRightCount = 86400 - timElapsed;
+        rightCounts[index] += currentRightCount;
 
-      document.getElementById('countLeft' + index).textContent = leftCounts[index];
-      document.getElementById('countRight' + index).textContent = rightCounts[index];
+        document.getElementById('countLeft' + index).textContent = leftCounts[index];
+        document.getElementById('countRight' + index).textContent = rightCounts[index];
 
-      document.getElementById("beep").play();
+        document.getElementById("beep").play();
+
+        // ✨ Efecto visual solo si se ha sumado
+        const square = document.querySelectorAll(".square")[index];
+        square.classList.add("pressed");
+        setTimeout(() => square.classList.remove("pressed"), 150);
     }
-  }
+}
 
   function showResults() {
   var teams = ["TÍO JACK", "GIBBS", "PATA PALO", "W. TURNER", "J. SPARROW", "DAVY JONES", "KRAKEN", "P. NEGRA"];
