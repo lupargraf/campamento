@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contadores</title>
+    <style>
+        body {
+            background-color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        .square-cell {
+            text-align: center;
+            vertical-align: middle;
+            width: 180px;
+            height: 140px;
+        }
+        .square {
+            width: 100%;
+            height: 60%;
+            cursor: pointer;
+        }
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .counters {
+            font-size: 10px;
+        }
+        .button {
+            background-color: #FF0000;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+        .team-table {
+            width: 35%;
+        }
+        .team-table th, .team-table td {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="beep" src="https://lupargraf.github.io/campamento/Pataco.mp3"></audio>
+
+    <table>
+        <!-- FILA 1 -->
+        <tr>
+            <td class="square-cell">
+                <div class="title">Adrián Fernández</div>
+                <div class="square" style="background-color: #F39200;" onclick="updateCounts(0)"></div>
+                <div class="counters" id="countLeft0">1</div>
+                <div class="counters" id="countRight0">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Guillermo Sánchez</div>
+                <div class="square" style="background-color: #36A9E1;" onclick="updateCounts(1)"></div>
+                <div class="counters" id="countLeft1">1</div>
+                <div class="counters" id="countRight1">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">avier López-Marín</div>
+                <div class="square" style="background-color: #C9D400;" onclick="updateCounts(2)"></div>
+                <div class="counters" id="countLeft2">1</div>
+                <div class="counters" id="countRight2">0</div>
+            </td>
+        </tr>
+
+        <!-- FILA 2 -->
+        <tr>
+            <td class="square-cell">
+                <div class="title">Martín Arenas</div>
+                <div class="square" style="background-color: #ABB8DF;" onclick="updateCounts(3)"></div>
+                <div class="counters" id="countLeft3">1</div>
+                <div class="counters" id="countRight3">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Mateo Jimenez</div>
+                <div class="square" style="background-color: #A4D6D4;" onclick="updateCounts(4)"></div>
+                <div class="counters" id="countLeft4">1</div>
+                <div class="counters" id="countRight4">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Pablo del Árbol</div>
+                <div class="square" style="background-color: #ba8dfd;" onclick="updateCounts(5)"></div>
+                <div class="counters" id="countLeft5">1</div>
+                <div class="counters" id="countRight5">0</div>
+            </td>
+        </tr>
+
+        <!-- FILA 3 -->
+        <tr>
+            <td class="square-cell">
+                <div class="title">Álvaro González</div>
+                <div class="square" style="background-color: #A5D9E7;" onclick="updateCounts(6)"></div>
+                <div class="counters" id="countLeft6">1</div>
+                <div class="counters" id="countRight6">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Anatole Esipov</div>
+                <div class="square" style="background-color: #A3D0A3;" onclick="updateCounts(7)"></div>
+                <div class="counters" id="countLeft7">1</div>
+                <div class="counters" id="countRight7">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Ángel Ruiz</div>
+                <div class="square" style="background-color: #F191A6;" onclick="updateCounts(8)"></div>
+                <div class="counters" id="countLeft8">1</div>
+                <div class="counters" id="countRight8">0</div>
+            </td>
+        </tr>
+
+        <!-- FILA 4 -->
+        <tr>
+            <td class="square-cell">
+                <div class="title">Gabriel Fernández</div>
+                <div class="square" style="background-color: #FFD100;" onclick="updateCounts(9)"></div>
+                <div class="counters" id="countLeft9">1</div>
+                <div class="counters" id="countRight9">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Javier Roiz</div>
+                <div class="square" style="background-color: #83B4E2;" onclick="updateCounts(10)"></div>
+                <div class="counters" id="countLeft10">1</div>
+                <div class="counters" id="countRight10">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Manuel Cabrera</div>
+                <div class="square" style="background-color: #C7A970;" onclick="updateCounts(11)"></div>
+                <div class="counters" id="countLeft11">1</div>
+                <div class="counters" id="countRight11">0</div>
+            </td>
+        </tr>
+
+        <!-- FILA 5 -->
+        <tr>
+            <td class="square-cell">
+                <div class="title">Ramón Ortega</div>
+                <div class="square" style="background-color: #10315e;" onclick="updateCounts(12)"></div>
+                <div class="counters" id="countLeft12">1</div>
+                <div class="counters" id="countRight12">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Santiago Molina</div>
+                <div class="square" style="background-color: #FF6B6B;" onclick="updateCounts(13)"></div>
+                <div class="counters" id="countLeft13">1</div>
+                <div class="counters" id="countRight13">0</div>
+            </td>
+            <td class="square-cell">
+                <div class="title">Sergio Fortis</div>
+                <div class="square" style="background-color: #6BCB77;" onclick="updateCounts(14)"></div>
+                <div class="counters" id="countLeft14">1</div>
+                <div class="counters" id="countRight14">0</div>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3">
+                <button class="button" onclick="showResults()">FINAL</button>
+            </td>
+        </tr>
+    </table>
+
+    <div id="results" class="hidden">
+        <table class="team-table"></table>
+    </div>
+
+    <script>
+        var leftCounts = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+        var rightCounts = new Array(leftCounts.length).fill(0);
+
+        function updateCounts(index) {
+            if (leftCounts[index] > 0) {
+                var now = new Date();
+                var timElapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                leftCounts[index]--;
+
+                var currentRightCount = 86400 - timElapsed;
+                rightCounts[index] += currentRightCount;
+
+                document.getElementById('countLeft' + index).textContent = leftCounts[index];
+                document.getElementById('countRight' + index).textContent = rightCounts[index];
+
+                var audio = document.getElementById("beep");
+                audio.play();
+            }
+        }
+
+        function showResults() {
+            var teams = [
+                "Adrián Fernández","Guillermo Sánchez","Javier López-Marín","Martín Arenas","Mateo Jimenez",
+                "Pablo del Árbol","Álvaro González","Anatole Esipov","Ángel Ruiz","Gabriel Fernández",
+                "Javier Roiz","Manuel Cabrera","Ramón Ortega","Santiago Molina","Sergio Fortis"
+            ];
+
+            var table = document.querySelector(".team-table");
+            table.innerHTML = "<tr><th>Equipo</th><th>Puntuación Final</th></tr>";
+
+            for (var i = 0; i < teams.length; i++) {
+                var row = table.insertRow();
+                row.insertCell(0).innerHTML = teams[i];
+                row.insertCell(1).innerHTML = rightCounts[i];
+            }
+
+            document.getElementById('results').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
