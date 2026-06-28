@@ -72,17 +72,21 @@
     .team-table th, .team-table td {
       padding: 5px;
     }
-    .square {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
+    .flag {
+  width: 100%;
+  height: 70%;
+  object-fit: contain;
+  cursor: pointer;
   user-select: none;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform 0.12s ease, filter 0.12s ease;
 }
 
-.square.pressed {
-  transform: scale(0.85);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+.flag.pressed {
+  transform: scale(0.88);
+  filter: brightness(1.35);
 }
   </style>
 </head>
@@ -92,19 +96,19 @@
   <tr>
     <td class="square-cell">
       <div class="title">AUSTRIA</div>
-      <div id="square0" class="square" style="background-color: #F39200;" onclick="updateCounts(0)"></div>
+      <img id="square0" class="flag" src="Banderas/Austria.jpg" onclick="updateCounts(0)">
       <div class="counters" id="countLeft0">10</div>
       <div class="counters" id="countRight0">0</div>
     </td>
     <td class="square-cell">
       <div class="title">BÉLGICA</div>
-      <div id="square1" class="square" style="background-color: #36A9E1;" onclick="updateCounts(1)"></div>
+      <img id="square1" class="flag" src="Banderas/Bélgica.jpg" onclick="updateCounts(1)">
       <div class="counters" id="countLeft1">10</div>
       <div class="counters" id="countRight1">0</div>
     </td>
     <td class="square-cell">
       <div class="title">ITALIA</div>
-      <div id="square2" class="square" style="background-color: #C9D400;" onclick="updateCounts(2)"></div>
+      <img id="square2" class="flag" src="Banderas/Italia.jpg" onclick="updateCounts(2)">
       <div class="counters" id="countLeft2">10</div>
       <div class="counters" id="countRight2">0</div>
     </td>
@@ -112,14 +116,14 @@
   <tr>
     <td class="square-cell">
       <div class="title">JAPÓN</div>
-      <div id="square3" class="square" style="background-color: #ABB8DF;" onclick="updateCounts(3)"></div>
+      <img id="square3" class="flag" src="Banderas/Japón.jpg" onclick="updateCounts(3)">
       <div class="counters" id="countLeft3">10</div>
       <div class="counters" id="countRight3">0</div>
     </td>
     <td class="square-cell"></td>
     <td class="square-cell">
       <div class="title">SUIZA</div>
-      <div id="square4" class="square" style="background-color: #2C3E50;" onclick="updateCounts(4)"></div>
+      <img id="square4" class="flag" src="Banderas/Suiza.jpg" onclick="updateCounts(4)">
       <div class="counters" id="countLeft4">10</div>
       <div class="counters" id="countRight4">0</div>
     </td>
@@ -127,19 +131,19 @@
   <tr>
     <td class="square-cell">
       <div class="title">ALEMANIA</div>
-      <div id="square5" class="square" style="background-color: #A3D0A3;" onclick="updateCounts(5)"></div>
+      <img id="square5" class="flag" src="Banderas/Alemania.jpg" onclick="updateCounts(5)">
       <div class="counters" id="countLeft5">10</div>
       <div class="counters" id="countRight5">0</div>
     </td>
     <td class="square-cell">
       <div class="title">EEUU</div>
-      <div id="square6" class="square" style="background-color: #F191A6;" onclick="updateCounts(6)"></div>
+      <img id="square6" class="flag" src="Banderas/EEUU.jpg" onclick="updateCounts(6)">
       <div class="counters" id="countLeft6">10</div>
       <div class="counters" id="countRight6">0</div>
     </td>
     <td class="square-cell">
       <div class="title">FRANCIA</div>
-      <div id="square7" class="square" style="background-color: #FFD100;" onclick="updateCounts(7)"></div>
+      <img id="square7" class="flag" src="Banderas/Francia.jpg" onclick="updateCounts(7)">
       <div class="counters" id="countLeft7">10</div>
       <div class="counters" id="countRight7">0</div>
     </td>
@@ -147,14 +151,14 @@
   <tr>
       <td class="square-cell">
       <div class="title">INGLATERRA</div>
-      <div id="square8" class="square" style="background-color: #2A511B;" onclick="updateCounts(8)"></div>
+      <img id="square8" class="flag" src="Banderas/Inglaterra.jpg" onclick="updateCounts(8)">
       <div class="counters" id="countLeft8">10</div>
       <div class="counters" id="countRight8">0</div>
     </td>
    <td class="square-cell"></td>
       <td class="square-cell">
       <div class="title">P. BAJOS</div>
-      <div id="square9" class="square" style="background-color: #8C0C4C;" onclick="updateCounts(9)"></div>
+      <img id="square9" class="flag" src="Banderas/Países bajos.jpg" onclick="updateCounts(9)">
       <div class="counters" id="countLeft9">10</div>
       <div class="counters" id="countRight9">0</div>
     </td>
