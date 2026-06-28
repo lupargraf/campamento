@@ -144,6 +144,7 @@
       <div class="counters" id="countRight7">0</div>
     </td>
   </tr>
+  <tr>
       <td class="square-cell">
       <div class="title">INGLATERRA</div>
       <div id="square8" class="square" style="background-color: #2A511B;" onclick="updateCounts(8)"></div>
@@ -157,6 +158,7 @@
       <div class="counters" id="countLeft9">10</div>
       <div class="counters" id="countRight9">0</div>
     </td>
+    </tr>
   <tr>
     <td colspan="3">
       <button class="button" onclick="showResults()">FINAL</button>
@@ -191,7 +193,14 @@
 
     // Efecto visual (flash temporal)
     const button = document.getElementById('square' + index);
+    if (button) {
     button.classList.add('pressed');
+    setTimeout(() => {
+        button.classList.remove('pressed');
+    }, 150);
+}
+
+document.getElementById("beep").play();
     setTimeout(() => {
       button.classList.remove('pressed');
     }, 150);
