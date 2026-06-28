@@ -61,92 +61,71 @@
     <table>
         <tr>
             <td class="square-cell">
-                <div class="title">TÍO JACK</div>
+                <div class="title">AUSTRIA</div>
                 <div class="square" style="background-color: #F39200;" onclick="updateCounts(0)"></div>
-                <div class="counters" id="countLeft0">8</div>
+                <div class="counters" id="countLeft0">10</div>
                 <div class="counters" id="countRight0">0</div>
             </td>
             <td class="square-cell">
-                <div class="title">GIBBS</div>
+                <div class="title">BÉLGICA</div>
                 <div class="square" style="background-color: #36A9E1;" onclick="updateCounts(1)"></div>
-                <div class="counters" id="countLeft1">8</div>
+                <div class="counters" id="countLeft1">10</div>
                 <div class="counters" id="countRight1">0</div>
             </td>
             <td class="square-cell">
-                <div class="title">PATA PALO</div>
+                <div class="title">ITALIA</div>
                 <div class="square" style="background-color: #C9D400;" onclick="updateCounts(2)"></div>
-                <div class="counters" id="countLeft2">8</div>
+                <div class="counters" id="countLeft2">10</div>
                 <div class="counters" id="countRight2">0</div>
             </td>
         </tr>
         <tr>
             <td class="square-cell">
-                <div class="title">W. TURNER</div>
+                <div class="title">JAPÓN</div>
                 <div class="square" style="background-color: #ABB8DF;" onclick="updateCounts(3)"></div>
-                <div class="counters" id="countLeft3">7</div>
+                <div class="counters" id="countLeft3">10</div>
                 <div class="counters" id="countRight3">0</div>
             </td>
             <td class="square-cell">
-                <div class="title">BUCANEROS</div>
+                <div class="title">SUIZA</div>
                 <div class="square" style="background-color: #A4D6D4;" onclick="updateCounts(4)"></div>
-                <div class="counters" id="countLeft4">8</div>
+                <div class="counters" id="countLeft4">10</div>
                 <div class="counters" id="countRight4">0</div>
             </td>
             <td class="square-cell">
-                <div class="title">LOBOS MAR</div>
+                <div class="title">ALEMANIA</div>
                 <div class="square" style="background-color: #ba8dfd;" onclick="updateCounts(5)"></div>
-                <div class="counters" id="countLeft5">9</div>
+                <div class="counters" id="countLeft5">10</div>
                 <div class="counters" id="countRight5">0</div>
         </tr>
         <tr>
             <td class="square-cell">
-                <div class="title">J. SPARROW</div>
+                <div class="title">EEUU</div>
                 <div class="square" style="background-color: #A5D9E7;" onclick="updateCounts(6)"></div>
                 <div class="counters" id="countLeft6">10</div>
                 <div class="counters" id="countRight6">0</div>
             </td>
             <td class="square-cell">
-                <div class="title">BARBOSA</div>
+                <div class="title">FRANCIA</div>
                 <div class="square" style="background-color: #A3D0A3;" onclick="updateCounts(7)"></div>
-                <div class="counters" id="countLeft7">9</div>
+                <div class="counters" id="countLeft7">10</div>
                 <div class="counters" id="countRight7">0</div>
             </td>
             <td class="square-cell">
-                <div class="title">BARBANEGRA</div>
+                <div class="title">INGLATERRA</div>
                 <div class="square" style="background-color: #F191A6;" onclick="updateCounts(8)"></div>
-                <div class="counters" id="countLeft8">9</div>
+                <div class="counters" id="countLeft8">10</div>
                 <div class="counters" id="countRight8">0</div>
             </td>
         </tr>
         <tr>
             <td class="square-cell">
-                <div class="title">DAVY J.</div>
+                <div class="title">P. BAJOS</div>
                 <div class="square" style="background-color: #FFD100;" onclick="updateCounts(9)"></div>
                 <div class="counters" id="countLeft9">10</div>
                 <div class="counters" id="countRight9">0</div>
             </td>
-            <td class="square-cell">
-                <div class="title">KRAKEN</div>
-                <div class="square" style="background-color: #83B4E2;" onclick="updateCounts(10)"></div>
-                <div class="counters" id="countLeft10">9</div>
-                <div class="counters" id="countRight10">0</div>
-            </td>
-            <td class="square-cell">
-                <div class="title">H. ERRANTE</div>
-                <div class="square" style="background-color: #C7A970;" onclick="updateCounts(11)"></div>
-                <div class="counters" id="countLeft11">8</div>
-                <div class="counters" id="countRight11">0</div>
-            </td>
         </tr>
-        <tr>
-            <td class="square-cell">
-                <div class="title">P. NEGRA</div>
-                <div class="square" style="background-color: #10315e;" onclick="updateCounts(12)"></div>
-                <div class="counters" id="countLeft12">11</div>
-                <div class="counters" id="countRight12">0</div>
-            </td>
-        </tr>
-        <tr>
             <td colspan="3">
                 <button class="button" onclick="showResults()">FINAL</button>
             </td>
@@ -163,7 +142,7 @@
     </div>
 
     <script>
-        var leftCounts = [8, 8, 8, 7, 8, 9, 10, 9, 9, 10, 9, 8, 11];
+        var leftCounts = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
         var rightCounts = new Array(leftCounts.length).fill(0);
 
         function updateCounts(index) {
@@ -185,7 +164,7 @@
         }
 
         function showResults() {
-            var teams = ["TÍO JACK", "GIBBS", "PATA PALO", "WILL TURNER", "BUCANEROS", "LOBOS MAR", "J. SPARROW", "BARBOSA", "BARBANEGRA", "DAVY J.", "KRAKEN", "H. ERRANTE", "P. NEGRA"];
+            var teams = ["AUSTRIA", "BÉLGICA", "ITALIA", "JAPÓN", "SUIZA", "ALEMANIA", "EEUU", "FRANCIA", "INGLATERRA", "P. BAJOS"];
             var teamScores = [];
 
             for (var i = 0; i < teams.length; i++) {
