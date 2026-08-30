@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>HORTERÍSIMA 2027</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #f8fafc;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    /* --- PANTALLA DE CONFIGURACIÓN INICIAL --- */
+    .setup-screen {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    .setup-screen p {
+      color: #94a3b8;
+      font-size: 0.95em;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: #0f172a;
+      border: 2px solid #475569;
+      color: #38bdf8;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 1.05em;
+      font-weight: bold;
+      resize: vertical;
+      margin-bottom: 20px;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    .btn-start {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      color: #0f172a;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1em;
+      font-weight: 800;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-start:active {
+      transform: translateY(0);
+    }
+
+    /* --- CONTENEDOR PRINCIPAL (PANEL + MARCADOR) --- */
+    .main-app {
+      display: none; /* Oculto al inicio */
+      position: relative;
+    }
+
+    .top-bar {
+      max-width: 1400px;
+      margin: 0 auto 10px auto;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .btn-reset {
+      background: #334155;
+      color: #94a3b8;
+      border: 1px solid #475569;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.85em;
+      transition: all 0.2s;
+    }
+
+    .btn-reset:hover {
+      background: #475569;
+      color: #fff;
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* --- PANEL IZQUIERDO: FORMULARIO --- */
+    .panel-form {
+      flex: 1;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      max-height: 82vh;
+      overflow-y: auto;
+    }
+
+    .team-row {
+      background: #334155;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+
+    .team-name-title {
+      font-weight: bold;
+      color: #38bdf8;
+      margin-bottom: 5px;
+      font-size: 1.1em;
+    }
+
+    .inputs-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .input-box {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      align-items: center;
+    }
+
+    .input-box label {
+      font-size: 0.75em;
+      color: #94a3b8;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      text-align: center;
+      width: 100%;
+    }
+
+    input[type="number"] {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #fff;
+      padding: 6px 2px;
+      border-radius: 4px;
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+
+    /* --- PANEL DERECHO: MARCADOR 3D --- */
+    .panel-score {
+      flex: 1.2;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: relative;
+      height: 82vh;
+      overflow: hidden;
+    }
+
+    .board {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .bar-wrapper {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 45px;
+      transition: top 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-3d {
+      position: relative;
+      height: 100%;
+      width: 0%;
+      min-width: 180px;
+      border-radius: 25px;
+      color: #0f172a;
+      box-shadow: 
+        0 6px 0 rgba(0, 0, 0, 0.3),
+        0 12px 15px rgba(0, 0, 0, 0.4),
+        inset 0 2px 2px rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-text {
+      font-weight: 800;
+      font-size: 1.1em;
+      white-space: nowrap;
+    }
+
+    .bar-points {
+      background: rgba(255, 255, 255, 0.5);
+      color: #0f172a;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-weight: 800;
+      font-size: 1.1em;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>HORTERÍSIMA 2027</h1>
+
+  <div class="setup-screen" id="setup-screen">
+    <h2>Configuración de Equipos</h2>
+    <p>Introduce los nombres de los equipos separados por comas.<br>El número de equipos se ajustará automáticamente.</p>
+    <textarea id="teams-input">AUSTRIA, BÉLGICA, ITALIA, JAPÓN, SUIZA, ALEMANIA, EEUU, FRANCIA, INGLATERRA, PAÍSES BAJOS</textarea>
+    <br>
+    <button class="btn-start" onclick="startFestival()">¡Comenzar Festival!</button>
+  </div>
+
+  <div class="main-app" id="main-app">
+    <div class="top-bar">
+      <button class="btn-reset" onclick="showSetup()">⚙️ Cambiar Equipos</button>
+    </div>
+    <div class="container">
+      <div class="panel-form" id="form-container"></div>
+
+      <div class="panel-score">
+        <div class="board" id="board"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Paleta de colores claros/vivos con su degradado para mantener el efecto 3D
+    const colores = [
+      "linear-gradient(180deg, #38bdf8 0%, #0284c7 100%)", // Cian claro
+      "linear-gradient(180deg, #fb7185 0%, #e11d48 100%)", // Rosa claro
+      "linear-gradient(180deg, #4ade80 0%, #16a34a 100%)", // Verde menta
+      "linear-gradient(180deg, #facc15 0%, #ca8a04 100%)", // Amarillo brillante
+      "linear-gradient(180deg, #c084fc 0%, #9333ea 100%)", // Violeta claro
+      "linear-gradient(180deg, #fb923c 0%, #ea580c 100%)", // Naranja pastel
+      "linear-gradient(180deg, #2dd4bf 0%, #0d9488 100%)", // Turquesa
+      "linear-gradient(180deg, #f472b6 0%, #db2777 100%)", // Chicle
+      "linear-gradient(180deg, #a3e635 0%, #65a30d 100%)", // Lima
+      "linear-gradient(180deg, #818cf8 0%, #4f46e5 100%)", // Azul lavanda
+      "linear-gradient(180deg, #f87171 0%, #dc2626 100%)", // Coral
+      "linear-gradient(180deg, #38edf8 0%, #0891b2 100%)"  // Azul celeste
+    ];
+
+    let scores = [];
+    const setupScreen = document.getElementById('setup-screen');
+    const mainApp = document.getElementById('main-app');
+    const formContainer = document.getElementById('form-container');
+    const board = document.getElementById('board');
+
+    // Iniciar el festival procesando los equipos introducidos
+    function startFestival() {
+      const inputText = document.getElementById('teams-input').value;
+      
+      // Obtener lista limpia de nombres (eliminando espacios sobrantes)
+      const listaNombres = inputText
+        .split(',')
+        .map(n => n.trim())
+        .filter(n => n.length > 0);
+
+      if (listaNombres.length === 0) {
+        alert("Por favor, introduce al menos el nombre de un equipo.");
+        return;
+      }
+
+      // Crear estructura de datos según los equipos introducidos
+      scores = listaNombres.map((nombre, index) => ({
+        id: index,
+        nombre: nombre,
+        publico: 0,
+        jueces: Array(5).fill(0),
+        total: 0,
+        color: colores[index % colores.length]
+      }));
+
+      // Alternar visibilidad
+      setupScreen.style.display = 'none';
+      mainApp.style.display = 'block';
+
+      // Cargar interfaz de puntos y barras
+      renderForm();
+      initBoard();
+    }
+
+    // Volver a la pantalla de configuración
+    function showSetup() {
+      if (confirm("¿Quieres volver a la pantalla de configuración? Se reiniciarán las puntuaciones.")) {
+        mainApp.style.display = 'none';
+        setupScreen.style.display = 'block';
+      }
+    }
+
+    // 1. Generar Formulario
+    function renderForm() {
+      formContainer.innerHTML = '';
+      scores.forEach((eq) => {
+        const row = document.createElement('div');
+        row.className = 'team-row';
+        
+        let juecesInputs = '';
+        for (let j = 0; j < 5; j++) {
+          juecesInputs += `
+            <div class="input-box">
+              <label>JUEZ ${j+1}</label>
+              <input type="number" min="0" max="36" step="3" value="${eq.jueces[j] || ''}" 
+                onchange="updateScore(${eq.id}, 'juez', this.value, ${j})">
+            </div>
+          `;
+        }
+
+        row.innerHTML = `
+          <div class="team-name-title">${eq.nombre}</div>
+          <div class="inputs-group">
+            <div class="input-box">
+              <label>PÚBLICO</label>
+              <input type="number" min="0" max="11" value="${eq.publico || ''}" 
+                onchange="updateScore(${eq.id}, 'publico', this.value)">
+            </div>
+            ${juecesInputs}
+          </div>
+        `;
+        formContainer.appendChild(row);
+      });
+    }
+
+    // 2. Generar Barras 3D en el Marcador
+    function initBoard() {
+      board.innerHTML = '';
+      scores.forEach((eq) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'bar-wrapper';
+        wrapper.id = `bar-wrapper-${eq.id}`;
+        
+        wrapper.innerHTML = `
+          <div class="bar-3d" id="bar-${eq.id}" style="background: ${eq.color};">
+            <span class="bar-text">${eq.nombre}</span>
+            <span class="bar-points" id="points-${eq.id}">0</span>
+          </div>
+        `;
+        board.appendChild(wrapper);
+      });
+      updateBoardPositions();
+    }
+
+    // 3. Actualizar Datos
+    function updateScore(id, type, value, judgeIndex = null) {
+      const val = parseInt(value) || 0;
+      const team = scores.find(e => e.id === id);
+
+      if (type === 'publico') {
+        team.publico = val;
+      } else if (type === 'juez') {
+        team.jueces[judgeIndex] = val;
+      }
+
+      // Calcular Total
+      const totalJueces = team.jueces.reduce((a, b) => a + b, 0);
+      team.total = team.publico + totalJueces;
+
+      updateBoardPositions();
+    }
+
+    // 4. Actualizar Posiciones y Tamaños con Animación CSS
+    function updateBoardPositions() {
+      // Ordenar por Puntos (Descendente) y Desempate por Nombre (Alfabético A-Z)
+      const sorted = [...scores].sort((a, b) => {
+        if (b.total !== a.total) {
+          return b.total - a.total;
+        }
+        return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+      });
+      
+      const maxTotal = Math.max(...scores.map(s => s.total), 1);
+
+      // Adaptar el espaciado vertical dinámicamente según cuántos equipos haya
+      const numEquipos = scores.length;
+      const spacing = numEquipos > 10 ? 52 : 60; // Más compacto si hay muchos equipos
+
+      scores.forEach((eq) => {
+        const rank = sorted.findIndex(s => s.id === eq.id);
+        const wrapper = document.getElementById(`bar-wrapper-${eq.id}`);
+        const bar = document.getElementById(`bar-${eq.id}`);
+        const points = document.getElementById(`points-${eq.id}`);
+
+        // Mover verticalmente según el ranking
+        wrapper.style.top = `${rank * spacing}px`;
+
+        // Calcular ancho proporcional
+        const percentage = eq.total > 0 ? 25 + ((eq.total / maxTotal) * 75) : 25;
+        bar.style.width = `${percentage}%`;
+
+        // Actualizar texto de puntos
+        points.textContent = `${eq.total}`;
+      });
+    }
+  </script>
+</body>
+</html>
