@@ -55,17 +55,15 @@
   <p id="loading">Cargando contenido del repositorio...</p>
   <ul id="lista-archivos" class="file-list"></ul>
 
-  <script>
-    // --- CONFIGURA TUS DATOS DE GITHUB ---
-    const usuario = 'lupagraf';
-    const repositorio = 'campamento';
+<script>
+    // Obtiene automáticamente el usuario y repositorio desde la URL actual
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    const usuario = window.location.hostname.split('.')[0];
+    const repositorio = pathSegments[0] || '';
 
     const urlApi = `https://api.github.com/repos/${usuario}/${repositorio}/contents/`;
-
-    // Extensiones permitidas
     const extensionesPermitidas = ['.html', '.pdf', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'];
 
-    // Función para asignar icono según la extensión
     function obtenerIcono(nombreArchivo) {
       const ext = nombreArchivo.substring(nombreArchivo.lastIndexOf('.')).toLowerCase();
       if (ext === '.html') return '🌐';
@@ -80,12 +78,13 @@
 
       try {
         const respuesta = await fetch(urlApi);
-        if (!respuesta.ok) throw new Error('No se pudieron obtener los archivos');
+        if (!respuesta.ok) {
+          throw new Error(`HTTP ${respuesta.status}: No se pudo acceder a la API`);
+        }
         
         const archivos = await respuesta.json();
         mensajeCarga.style.display = 'none';
 
-        // Filtrar archivos por extensión e ignorar el propio index.html
         const archivosValidos = archivos.filter(item => {
           if (item.type !== 'file') return false;
           const nombreLower = item.name.toLowerCase();
@@ -99,11 +98,9 @@
           return;
         }
 
-        // Crear dinámicamente la lista
         archivosValidos.forEach(archivo => {
           const li = document.createElement('li');
           li.className = 'file-item';
-          
           const icono = obtenerIcono(archivo.name);
 
           li.innerHTML = `
@@ -116,7 +113,7 @@
         });
 
       } catch (error) {
-        mensajeCarga.textContent = '❌ Error al cargar la lista de archivos.';
+        mensajeCarga.innerHTML = `❌ Error al cargar los archivos.<br><small style="color:#f87171;">Detalle: ${error.message}</small>`;
         console.error(error);
       }
     }
