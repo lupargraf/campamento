@@ -84,6 +84,25 @@
       background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
     }
 
+    .btn-back-phase {
+      width: 100%;
+      margin-bottom: 15px;
+      background: #334155;
+      color: #38bdf8;
+      border: 1px solid #38bdf8;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.9em;
+      transition: all 0.2s;
+    }
+
+    .btn-back-phase:hover {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+
     /* --- CONTENEDOR PRINCIPAL (PANEL + MARCADOR) --- */
     .main-app {
       display: none;
@@ -447,7 +466,7 @@
         html += `</tbody></table></div>`;
         html += `
           <button class="btn-action btn-next-phase" onclick="goToPhase2()">
-            Puntuaciones del Jurado ➔
+            Votaciones del Jurado ➔
           </button>
         `;
 
@@ -456,9 +475,12 @@
       } else {
         // --- FASE 2: PUNTUACIONES DEL JURADO ---
         let html = `
+          <button class="btn-back-phase" onclick="goToPhase1()">
+            ⬅ Votos del Público
+          </button>
           <div class="phase-title">Fase 2: Votación del Jurado</div>
           <p style="font-size:0.85em; color:#94a3b8; margin-bottom:15px;">
-            Votaciones de los 5 jueces (3, 6, 9, 12...).
+            Votaciones de los 5 jueces (múltiplos de 3, de 3 a 36).
           </p>
         `;
 
@@ -523,6 +545,12 @@
     // Cambiar a la Fase 2 (Jurado)
     function goToPhase2() {
       currentPhase = 2;
+      renderLeftPanel();
+    }
+
+    // Volver a la Fase 1 (Público) conservando notas de los jueces
+    function goToPhase1() {
+      currentPhase = 1;
       renderLeftPanel();
     }
 
