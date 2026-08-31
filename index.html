@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Proyectos y Archivos</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 40px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #38bdf8;
+      border-bottom: 2px solid #334155;
+      padding-bottom: 12px;
+    }
+    .file-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+    .file-item {
+      margin-bottom: 12px;
+    }
+    .file-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #1e293b;
+      color: #f8fafc;
+      text-decoration: none;
+      padding: 14px 18px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    .file-link:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      transform: translateX(4px);
+    }
+    #loading {
+      color: #94a3b8;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Menú de Archivos</h1>
+  <p id="loading">Cargando contenido del repositorio...</p>
+  <ul id="lista-archivos" class="file-list"></ul>
+
+  <script>
+    // --- CONFIGURA TUS DATOS DE GITHUB ---
+    const usuario = 'lupagraf';
+    const repositorio = 'campamento';
+
+    const urlApi = `https://api.github.com/repos/${usuario}/${repositorio}/contents/`;
+
+    // Extensiones permitidas
+    const extensionesPermitidas = ['.html', '.pdf', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'];
+
+    // Función para asignar icono según la extensión
+    function obtenerIcono(nombreArchivo) {
+      const ext = nombreArchivo.substring(nombreArchivo.lastIndexOf('.')).toLowerCase();
+      if (ext === '.html') return '🌐';
+      if (ext === '.pdf') return '📄';
+      if (['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp'].includes(ext)) return '🖼️';
+      return '📁';
+    }
+
+    async function cargarArchivos() {
+      const contenedorLista = document.getElementById('lista-archivos');
+      const mensajeCarga = document.getElementById('loading');
+
+      try {
+        const respuesta = await fetch(urlApi);
+        if (!respuesta.ok) throw new Error('No se pudieron obtener los archivos');
+        
+        const archivos = await respuesta.json();
+        mensajeCarga.style.display = 'none';
+
+        // Filtrar archivos por extensión e ignorar el propio index.html
+        const archivosValidos = archivos.filter(item => {
+          if (item.type !== 'file') return false;
+          const nombreLower = item.name.toLowerCase();
+          if (nombreLower === 'index.html') return false;
+          
+          return extensionesPermitidas.some(ext => nombreLower.endsWith(ext));
+        });
+
+        if (archivosValidos.length === 0) {
+          contenedorLista.innerHTML = '<li style="color:#94a3b8;">No se encontraron archivos HTML, PDF o imágenes.</li>';
+          return;
+        }
+
+        // Crear dinámicamente la lista
+        archivosValidos.forEach(archivo => {
+          const li = document.createElement('li');
+          li.className = 'file-item';
+          
+          const icono = obtenerIcono(archivo.name);
+
+          li.innerHTML = `
+            <a class="file-link" href="${archivo.name}" target="_blank">
+              <span>${icono}</span>
+              <span>${archivo.name}</span>
+            </a>
+          `;
+          contenedorLista.appendChild(li);
+        });
+
+      } catch (error) {
+        mensajeCarga.textContent = '❌ Error al cargar la lista de archivos.';
+        console.error(error);
+      }
+    }
+
+    cargarArchivos();
+  </script>
+</body>
+</html>
