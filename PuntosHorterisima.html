@@ -418,7 +418,7 @@
       }
     }
 
-    // Renderizar panel izquierdo según la fase activa
+// Renderizar panel izquierdo según la fase activa
     function renderLeftPanel() {
       panelLeft.innerHTML = '';
 
@@ -474,13 +474,15 @@
 
       } else {
         // --- FASE 2: PUNTUACIONES DEL JURADO ---
+        const maxPtsJuez = scores.length * 3; // Límite dinámico: Equipos x 3
+
         let html = `
           <button class="btn-back-phase" onclick="goToPhase1()">
             ⬅ Votos del Público
           </button>
           <div class="phase-title">Fase 2: Votación del Jurado</div>
           <p style="font-size:0.85em; color:#94a3b8; margin-bottom:15px;">
-            Votaciones de los 5 jueces (múltiplos de 3, de 3 a 36).
+            Votaciones de los 5 jueces (múltiplos de 3, de 3 a ${maxPtsJuez}).
           </p>
         `;
 
@@ -490,7 +492,7 @@
             juecesInputs += `
               <div class="input-box">
                 <label>JUEZ ${j+1}</label>
-                <input type="number" min="0" max="36" step="3" value="${eq.jueces[j] || ''}" 
+                <input type="number" min="0" max="${maxPtsJuez}" step="3" value="${eq.jueces[j] || ''}" 
                   onchange="updateJudgeScore(${eq.id}, ${j}, this.value)">
               </div>
             `;
