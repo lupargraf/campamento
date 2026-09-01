@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Contadores de Equipos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      background-color: #ffffff;
+      text-align: center;
+      margin: 0;
+      padding: 5px;
+      font-family: 'Arial', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+    .square-cell {
+      text-align: center;
+      vertical-align: middle;
+      width: 105px;
+      height: 105px;
+      padding: 2px;
+    }
+    .square {
+      width: 100%;
+      height: 60px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      transition: transform 0.1s ease, filter 0.1s ease;
+    }
+    .square.pressed {
+      transform: scale(0.85);
+      filter: brightness(1.35);
+    }
+    .title {
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 105px;
+    }
+    .counters {
+      font-size: 10px;
+      margin-top: 1px;
+      line-height: 1.1;
+    }
+    .button, .action-btn {
+      background-color: #FF0000;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .button:active, .action-btn:active {
+      transform: scale(0.85);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    }
+    .hidden {
+      display: none !important;
+    }
+    .team-table {
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto;
+      table-layout: fixed;
+      word-wrap: break-word;
+      font-size: 12px;
+      background-color: #ffffff;
+    }
+    .team-table th, .team-table td {
+      padding: 5px;
+      border: 1px solid #ccc;
+    }
+    #setup-container {
+      max-width: 450px;
+      margin: 0 auto;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: left;
+      font-size: 12px;
+    }
+    .team-input-row {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+    .team-input-row input {
+      padding: 4px;
+      font-size: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .team-input-row input[type="text"] {
+      flex: 2;
+    }
+    .team-input-row input[type="number"] {
+      flex: 1;
+    }
+    .team-input-row select {
+      padding: 4px;
+      font-size: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      flex: 0.8;
+    }
+    .team-input-row button {
+      background-color: #cc0000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<audio id="beep" src="https://lupargraf.github.io/campamento/Pataco.mp3"></audio>
+
+<div id="setup-container">
+  <h3 style="margin: 5px 0;">Configuración de Equipos</h3>
+  <div id="inputs-list"></div>
+  <button class="action-btn" type="button" onclick="addTeamInput()" style="background-color: #007BFF; font-size: 12px; padding: 6px 10px; margin-top: 5px;">+ Añadir equipo</button>
+  <br>
+  <button class="action-btn" type="button" onclick="startApp()" style="width: 100%;">Comenzar</button>
+</div>
+
+<div id="game-container" class="hidden">
+  <table id="game-table"></table>
+  <button class="button" onclick="showResults()">FINAL</button>
+</div>
+
+<div id="results" class="hidden" style="padding: 10px; background: #fff; max-width: 450px; margin: 0 auto;">
+  <h3 style="margin: 5px 0;">Llamadas: <span id="current-date"></span></h3>
+  <table class="team-table">
+    <tr>
+      <th>Equipo</th>
+      <th>Total</th>
+    </tr>
+  </table>
+  <br>
+  <button class="button" onclick="shareResults()" style="background-color: #007BFF;">COMPARTIR / GUARDAR</button>
+  <button class="button" onclick="goBack()">VOLVER</button>
+</div>
+
+<script>
+  let teamsData = [];
+  const colores = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3", "#33FFF3", "#FFA533", "#A533FF", "#FF3366", "#33FFA5"];
+  const initialTeams = [
+    {name: "AUSTRIA", cat: "P"}, {name: "BÉLGICA", cat: "P"}, {name: "ITALIA", cat: "P"}, {name: "JAPÓN", cat: "P"}, {name: "SUIZA", cat: "P"},
+    {name: "ALEMANIA", cat: "M"}, {name: "EEUU", cat: "M"}, {name: "FRANCIA", cat: "M"}, {name: "INGLATERRA", cat: "M"}, {name: "PAÍSES BAJOS", cat: "M"}
+  ];
+
+  window.onload = function() {
+    const list = document.getElementById('inputs-list');
+    initialTeams.forEach(t => {
+      let row = document.createElement('div');
+      row.className = 'team-input-row';
+      row.innerHTML = `
+        <input type="text" placeholder="Equipo" class="team-name" value="${t.name}">
+        <input type="number" placeholder="Int." class="team-count" value="10" min="1">
+        <select class="team-cat">
+          <option value="P" ${t.cat === 'P' ? 'selected' : ''}>P</option>
+          <option value="M" ${t.cat === 'M' ? 'selected' : ''}>M</option>
+        </select>
+        <button type="button" onclick="removeRow(this)">X</button>
+      `;
+      list.appendChild(row);
+    });
+  };
+
+  function addTeamInput() {
+    const list = document.getElementById('inputs-list');
+    let row = document.createElement('div');
+    row.className = 'team-input-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Equipo" class="team-name">
+      <input type="number" placeholder="Int." class="team-count" value="10" min="1">
+      <select class="team-cat">
+        <option value="P">P</option>
+        <option value="M">M</option>
+      </select>
+      <button type="button" onclick="removeRow(this)">X</button>
+    `;
+    list.appendChild(row);
+  }
+
+  function removeRow(btn) {
+    if (document.getElementsByClassName('team-input-row').length > 1) {
+      btn.parentElement.remove();
+    } else {
+      alert("Debe haber al menos un equipo.");
+    }
+  }
+
+  function startApp() {
+    const nameInputs = document.getElementsByClassName('team-name');
+    const countInputs = document.getElementsByClassName('team-count');
+    const catInputs = document.getElementsByClassName('team-cat');
+    
+    teamsData = [];
+    for (let i = 0; i < nameInputs.length; i++) {
+      let name = nameInputs[i].value.trim();
+      let count = parseInt(countInputs[i].value);
+      let cat = catInputs[i].value;
+      if (name !== "" && !isNaN(count)) {
+        teamsData.push({ name, leftCount: count, initialLeft: count, rightCount: 0, cat, id: i });
+      }
+    }
+
+    if (teamsData.length === 0) return alert("Introduce al menos un equipo válido.");
+
+    renderGameTables();
+    document.getElementById('setup-container').classList.add('hidden');
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('game-container').classList.remove('hidden');
+  }
+
+  function renderGameTables() {
+    const gameTable = document.getElementById('game-table');
+    gameTable.innerHTML = "";
+
+    let pequenos = teamsData.filter(t => t.cat === 'P');
+    let mayores = teamsData.filter(t => t.cat === 'M');
+    let sortedTeams = [...pequenos, ...mayores];
+    
+    let currentRow;
+    let currentCat = null;
+    let indexInRow = 0;
+    
+    for (let i = 0; i < sortedTeams.length; i++) {
+      let team = sortedTeams[i];
+      
+      if (i === 0 || team.cat !== currentCat || indexInRow === 3) {
+        currentRow = document.createElement('tr');
+        gameTable.appendChild(currentRow);
+        currentCat = team.cat;
+        indexInRow = 0;
+      }
+
+      let colorBg = colores[team.id % colores.length];
+      let cell = document.createElement('td');
+      cell.className = 'square-cell';
+      cell.innerHTML = `
+        <div class="title">${team.name}</div>
+        <div id="square${team.id}" class="square" style="background-color: ${colorBg};" onclick="updateCounts(${team.id})"></div>
+        <div class="counters" id="countLeft${team.id}">${team.leftCount}</div>
+        <div class="counters" id="countRight${team.id}">${team.rightCount}</div>
+      `;
+      currentRow.appendChild(cell);
+      indexInRow++;
+    }
+  }
+
+  function updateCounts(id) {
+    let team = teamsData.find(t => t.id === id);
+    if (team && team.leftCount > 0) {
+      let now = new Date();
+      let timeElapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      team.leftCount--;
+      team.rightCount += (86400 - timeElapsed);
+
+      document.getElementById('countLeft' + id).textContent = team.leftCount;
+      document.getElementById('countRight' + id).textContent = team.rightCount;
+
+      const button = document.getElementById('square' + id);
+      if (button) {
+        button.classList.add('pressed');
+        setTimeout(() => button.classList.remove('pressed'), 150);
+      }
+      document.getElementById("beep").play();
+    }
+  }
+
+  function showResults() {
+    // Mostrar la fecha actual del día en formato local
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', options);
+
+    let table = document.querySelector(".team-table");
+    while (table.rows.length > 1) table.deleteRow(1);
+
+    teamsData.forEach(team => {
+      let row = table.insertRow();
+      row.insertCell(0).textContent = `${team.name} (${team.cat})`;
+      row.insertCell(1).textContent = team.rightCount;
+    });
+
+    document.getElementById('game-container').classList.add('hidden');
+    document.getElementById('results').classList.remove('hidden');
+  }
+
+  function shareResults() {
+    const resultsDiv = document.getElementById('results');
+    
+    html2canvas(resultsDiv).then(canvas => {
+      canvas.toBlob(blob => {
+        const file = new File([blob], "llamadas-campamento.png", { type: "image/png" });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({
+            title: 'Llamadas',
+            text: 'Aquí están las llamadas finales:',
+            files: [file]
+          }).catch(error => console.log('Compartir cancelado', error));
+        } else {
+          const link = document.createElement('a');
+          link.download = 'llamadas-campamento.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        }
+      });
+    });
+  }
+
+  function goBack() {
+    document.getElementById('results').classList.add('hidden');
+    document.getElementById('game-container').classList.remove('hidden');
+  }
+</script>
+<script>
+  document.addEventListener("touchstart", function() {}, true);
+</script>
+</body>
+</html>
