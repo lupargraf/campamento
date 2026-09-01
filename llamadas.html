@@ -175,36 +175,25 @@
   ];
 
   window.onload = function() {
-    let savedTeams = localStorage.getItem('campamento_teams');
+    let savedTeams = localStorage.getItem('campamento_teams_v2');
     let teamsToLoad = savedTeams ? JSON.parse(savedTeams) : defaultTeams;
 
     const list = document.getElementById('inputs-list');
     list.innerHTML = "";
     
     teamsToLoad.forEach(t => {
-      let row = document.createElement('div');
-      row.className = 'team-input-row';
-      row.innerHTML = `
-        <input type="text" placeholder="Equipo" class="team-name" value="${t.name}">
-        <input type="number" placeholder="Int." class="team-count" value="${t.count}" min="1">
-        <select class="team-cat">
-          <option value="P" ${t.cat === 'P' ? 'selected' : ''}>P</option>
-          <option value="M" ${t.cat === 'M' ? 'selected' : ''}>M</option>
-        </select>
-        <button type="button" onclick="removeRow(this)">X</button>
-      `;
-      list.appendChild(row);
+      createRowElement(t.name, t.count, t.cat);
     });
   };
 
-  function addTeamInput(name = "", count = 10, cat = "P") {
+  function createRowElement(name = "", count = 10, cat = "P") {
     const list = document.getElementById('inputs-list');
     let row = document.createElement('div');
     row.className = 'team-input-row';
     row.innerHTML = `
-      <input type="text" placeholder="Equipo" class="team-name" value="${name}">
-      <input type="number" placeholder="Int." class="team-count" value="${count}" min="1">
-      <select class="team-cat">
+      <input type="text" placeholder="Equipo" class="team-name" value="${name}" oninput="saveToStorage()">
+      <input type="number" placeholder="Int." class="team-count" value="${count}" min="1" oninput="saveToStorage()">
+      <select class="team-cat" onchange="saveToStorage()">
         <option value="P" ${cat === 'P' ? 'selected' : ''}>P</option>
         <option value="M" ${cat === 'M' ? 'selected' : ''}>M</option>
       </select>
@@ -213,36 +202,53 @@
     list.appendChild(row);
   }
 
+  function addTeamInput() {
+    createRowElement("", 10, "P");
+    saveToStorage();
+  }
+
   function removeRow(btn) {
     if (document.getElementsByClassName('team-input-row').length > 1) {
       btn.parentElement.remove();
+      saveToStorage();
     } else {
       alert("Debe haber al menos un equipo.");
     }
   }
 
+  function saveToStorage() {
+    const nameInputs = document.getElementsByClassName('team-name');
+    const countInputs = document.getElementsByClassName('team-count');
+    const catInputs = document.getElementsByClassName('team-cat');
+    
+    let currentInputsState = [];
+    for (let i = 0; i < nameInputs.length; i++) {
+      let name = nameInputs[i].value.trim();
+      let count = parseInt(countInputs[i].value) || 0;
+      let cat = catInputs[i].value;
+      currentInputsState.push({ name, count, cat });
+    }
+    localStorage.setItem('campamento_teams_v2', JSON.stringify(currentInputsState));
+  }
+
   function startApp() {
+    saveToStorage();
+    
     const nameInputs = document.getElementsByClassName('team-name');
     const countInputs = document.getElementsByClassName('team-count');
     const catInputs = document.getElementsByClassName('team-cat');
     
     teamsData = [];
-    let currentInputsState = [];
-
     for (let i = 0; i < nameInputs.length; i++) {
       let name = nameInputs[i].value.trim();
       let count = parseInt(countInputs[i].value);
       let cat = catInputs[i].value;
       if (name !== "" && !isNaN(count)) {
         teamsData.push({ name, leftCount: count, initialLeft: count, rightCount: 0, cat, id: i });
-        currentInputsState.push({ name, count, cat });
       }
     }
 
     if (teamsData.length === 0) return alert("Introduce al menos un equipo válido.");
-
-    // Guardar los cambios automáticamente en el almacenamiento local del dispositivo
-    localStorage.setItem('campamento_teams', JSON.stringify(currentInputsState));
 
     renderGameTables();
     document.getElementById('setup-container').classList.add('hidden');
