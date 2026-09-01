@@ -168,19 +168,25 @@
 <script>
   let teamsData = [];
   const colores = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3", "#33FFF3", "#FFA533", "#A533FF", "#FF3366", "#33FFA5"];
-  const initialTeams = [
-    {name: "AUSTRIA", cat: "P"}, {name: "BÉLGICA", cat: "P"}, {name: "ITALIA", cat: "P"}, {name: "JAPÓN", cat: "P"}, {name: "SUIZA", cat: "P"},
-    {name: "ALEMANIA", cat: "M"}, {name: "EEUU", cat: "M"}, {name: "FRANCIA", cat: "M"}, {name: "INGLATERRA", cat: "M"}, {name: "PAÍSES BAJOS", cat: "M"}
+  
+  const defaultTeams = [
+    {name: "AUSTRIA", count: 10, cat: "P"}, {name: "BÉLGICA", count: 10, cat: "P"}, {name: "ITALIA", count: 10, cat: "P"}, {name: "JAPÓN", count: 10, cat: "P"}, {name: "SUIZA", count: 10, cat: "P"},
+    {name: "ALEMANIA", count: 10, cat: "M"}, {name: "EEUU", count: 10, cat: "M"}, {name: "FRANCIA", count: 10, cat: "M"}, {name: "INGLATERRA", count: 10, cat: "M"}, {name: "PAÍSES BAJOS", count: 10, cat: "M"}
   ];
 
   window.onload = function() {
+    let savedTeams = localStorage.getItem('campamento_teams');
+    let teamsToLoad = savedTeams ? JSON.parse(savedTeams) : defaultTeams;
+
     const list = document.getElementById('inputs-list');
-    initialTeams.forEach(t => {
+    list.innerHTML = "";
+    
+    teamsToLoad.forEach(t => {
       let row = document.createElement('div');
       row.className = 'team-input-row';
       row.innerHTML = `
         <input type="text" placeholder="Equipo" class="team-name" value="${t.name}">
-        <input type="number" placeholder="Int." class="team-count" value="10" min="1">
+        <input type="number" placeholder="Int." class="team-count" value="${t.count}" min="1">
         <select class="team-cat">
           <option value="P" ${t.cat === 'P' ? 'selected' : ''}>P</option>
           <option value="M" ${t.cat === 'M' ? 'selected' : ''}>M</option>
@@ -191,16 +197,16 @@
     });
   };
 
-  function addTeamInput() {
+  function addTeamInput(name = "", count = 10, cat = "P") {
     const list = document.getElementById('inputs-list');
     let row = document.createElement('div');
     row.className = 'team-input-row';
     row.innerHTML = `
-      <input type="text" placeholder="Equipo" class="team-name">
-      <input type="number" placeholder="Int." class="team-count" value="10" min="1">
+      <input type="text" placeholder="Equipo" class="team-name" value="${name}">
+      <input type="number" placeholder="Int." class="team-count" value="${count}" min="1">
       <select class="team-cat">
-        <option value="P">P</option>
-        <option value="M">M</option>
+        <option value="P" ${cat === 'P' ? 'selected' : ''}>P</option>
+        <option value="M" ${cat === 'M' ? 'selected' : ''}>M</option>
       </select>
       <button type="button" onclick="removeRow(this)">X</button>
     `;
@@ -221,16 +227,22 @@
     const catInputs = document.getElementsByClassName('team-cat');
     
     teamsData = [];
+    let currentInputsState = [];
+
     for (let i = 0; i < nameInputs.length; i++) {
       let name = nameInputs[i].value.trim();
       let count = parseInt(countInputs[i].value);
       let cat = catInputs[i].value;
       if (name !== "" && !isNaN(count)) {
         teamsData.push({ name, leftCount: count, initialLeft: count, rightCount: 0, cat, id: i });
+        currentInputsState.push({ name, count, cat });
       }
     }
 
     if (teamsData.length === 0) return alert("Introduce al menos un equipo válido.");
+
+    // Guardar los cambios automáticamente en el almacenamiento local del dispositivo
+    localStorage.setItem('campamento_teams', JSON.stringify(currentInputsState));
 
     renderGameTables();
     document.getElementById('setup-container').classList.add('hidden');
