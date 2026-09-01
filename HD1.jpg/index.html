@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Información de los Turnos - Campamento Verano 2026</title>
+    
+    <!-- LÍNEA MÁGICA: Obliga al navegador a buscar todas las imágenes desde la raíz del sitio -->
+    <base href="/">
+
     <style>
         :root {
             --primary: #007bff;
@@ -141,31 +145,36 @@
     ];
 
     function mostrarTurno(carpeta, nombreVisible) {
-        // Ocultar botones principales
         document.getElementById('pantalla-turnos').style.display = 'none';
-        
-        // Configurar título del turno elegido
         document.getElementById('titulo-turno').innerText = "Turno: " + nombreVisible;
         
-        // Generar el listado de botones dinámicamente apuntando a la carpeta correcta
         const listaDiv = document.getElementById('lista-enlaces');
-        listaDiv.innerHTML = ""; // Limpiar contenido previo
+        listaDiv.innerHTML = ""; 
         
         items.forEach(item => {
             const enlace = document.createElement('a');
             enlace.className = 'btn-item';
-            // Construye la ruta relativa: carpeta/archivo (ej: cme-cora/HD1.jpg)
-            enlace.href = carpeta + "/" + item.archivo;
+            
+            // Si tu repositorio no está en la raíz absoluta de tu dominio (ej: usuario.github.io/mi-repositorio/),
+            // GitHub Pages necesita la ruta exacta de la subcarpeta del proyecto.
+            // Para asegurar compatibilidad total, combinamos la URL de origen de manera dinámica:
+            const rutaActual = window.location.pathname.split('/')[1];
+            
+            // Si la URL tiene el nombre del repositorio en el path, se lo añadimos
+            if (rutaActual && !rutaActual.includes('.jpg') && !rutaActual.includes('.html')) {
+                enlace.href = "/" + rutaActual + "/" + carpeta + "/" + item.archivo;
+            } else {
+                enlace.href = "/" + carpeta + "/" + item.archivo;
+            }
+            
             enlace.innerText = item.nombre;
             listaDiv.appendChild(enlace);
         });
         
-        // Mostrar contenedor del listado
         document.getElementById('listado-container').style.display = 'block';
     }
 
     function volver() {
-        // Intercambiar pantallas para regresar al menú inicial
         document.getElementById('listado-container').style.display = 'none';
         document.getElementById('pantalla-turnos').style.display = 'block';
     }
