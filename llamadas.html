@@ -156,6 +156,7 @@
   <table class="team-table">
     <tr>
       <th>Equipo</th>
+      <th>Componentes</th>
       <th>Total</th>
     </tr>
   </table>
@@ -294,7 +295,6 @@
   }
 
   function showResults() {
-    // Mostrar la fecha actual del día en formato local
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', options);
 
@@ -303,8 +303,9 @@
 
     teamsData.forEach(team => {
       let row = table.insertRow();
-      row.insertCell(0).textContent = `${team.name} (${team.cat})`;
-      row.insertCell(1).textContent = team.rightCount;
+      row.insertCell(0).textContent = team.name;
+      row.insertCell(1).textContent = team.initialLeft;
+      row.insertCell(2).textContent = team.rightCount;
     });
 
     document.getElementById('game-container').classList.add('hidden');
@@ -321,7 +322,7 @@
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           navigator.share({
             title: 'Llamadas',
-            text: 'Aquí están las llamadas finales:',
+            text: 'Aquí están las llamadas y componentes finales:',
             files: [file]
           }).catch(error => console.log('Compartir cancelado', error));
         } else {
