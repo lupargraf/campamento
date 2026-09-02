@@ -4,7 +4,7 @@ ITALIA, 9, p
 JAPÓN, 7, p
 SUIZA, 9, p
 DINAMARCA, 7, p
-ALEMANIA, 8, p
+ALEMANIA, 8, m
 EEUU, 7, m
 FRANCIA, 8, m
 INGLATERRA, 7, m
