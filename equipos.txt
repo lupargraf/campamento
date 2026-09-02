@@ -10,6 +10,3 @@ INGLATERRA, 7, m
 PAÍSES BAJOS, 7, m
 RUSIA, 8, m
 CANADÁ, 7, m
-AUSTRALIA, 9, m
-CHINA, 10, m
-MÉXICO, 9, m
