@@ -24,13 +24,13 @@
       text-align: center;
       vertical-align: middle;
       width: 33.33%;
-      height: 18vh;
+      height: var(--cell-height, 18vh);
       padding: 2px;
     }
     .square {
       width: 100%;
-      height: calc(18vh - 40px);
-      min-height: 45px;
+      height: calc(var(--cell-height, 18vh) - 35px);
+      min-height: 40px;
       border-radius: 8px;
       border: 1px solid #555;
       cursor: pointer;
@@ -308,6 +308,12 @@
     let mayores = teamsData.filter(t => t.cat === 'M');
     let sortedTeams = [...pequenos, ...mayores];
     
+    // Calcular el número total de filas necesarias (3 equipos por fila)
+    let totalRows = Math.ceil(sortedTeams.length / 3);
+    // Ajustar dinámicamente el alto según el número de filas para ocupar toda la pantalla
+    let vhPerCell = Math.max(16, Math.floor(82 / totalRows));
+    gameTable.style.setProperty('--cell-height', vhPerCell + 'vh');
+
     let currentRow;
     let currentCat = null;
     let indexInRow = 0;
