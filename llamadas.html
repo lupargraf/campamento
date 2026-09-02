@@ -142,8 +142,9 @@
   <h3 style="margin: 5px 0;">Configuración de Equipos</h3>
   <div id="inputs-list"></div>
   <button class="action-btn" type="button" onclick="addTeamInput()" style="background-color: #007BFF; font-size: 12px; padding: 6px 10px; margin-top: 5px;">+ Añadir equipo</button>
-  <br>
-  <button class="action-btn" type="button" onclick="startApp()" style="width: 100%;">Comenzar</button>
+  <button class="action-btn" type="button" onclick="downloadTxtFile()" style="background-color: #28a745; font-size: 12px; padding: 6px 10px; margin-top: 5px; float: right;">Descargar equipos.txt</button>
+  <br style="clear: both;">
+  <button class="action-btn" type="button" onclick="startApp()" style="width: 100%; margin-top: 10px;">Comenzar</button>
 </div>
 
 <div id="game-container" class="hidden">
@@ -170,32 +171,70 @@
   const colores = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3", "#33FFF3", "#FFA533", "#A533FF", "#FF3366", "#33FFA5"];
   
   const defaultTeams = [
-    {name: "AUSTRIA", count: 10, cat: "P"}, {name: "BÉLGICA", count: 10, cat: "P"}, {name: "ITALIA", count: 10, cat: "P"}, {name: "JAPÓN", count: 10, cat: "P"}, {name: "SUIZA", count: 10, cat: "P"},
-    {name: "ALEMANIA", count: 10, cat: "M"}, {name: "EEUU", count: 10, cat: "M"}, {name: "FRANCIA", count: 10, cat: "M"}, {name: "INGLATERRA", count: 10, cat: "M"}, {name: "PAÍSES BAJOS", count: 10, cat: "M"}
+    {name: "equipo 1", count: 9, cat: "p"},
+    {name: "equipo 2", count: 8, cat: "p"},
+    {name: "equipo 3", count: 10, cat: "p"},
+    {name: "equipo 4", count: 7, cat: "p"},
+    {name: "equipo 5", count: 9, cat: "m"},
+    {name: "equipo 6", count: 8, cat: "m"},
+    {name: "equipo 7", count: 7, cat: "m"},
+    {name: "equipo 8", count: 9, cat: "m"}
   ];
 
   window.onload = function() {
-    let savedTeams = localStorage.getItem('campamento_teams_v2');
-    let teamsToLoad = savedTeams ? JSON.parse(savedTeams) : defaultTeams;
-
-    const list = document.getElementById('inputs-list');
-    list.innerHTML = "";
-    
-    teamsToLoad.forEach(t => {
-      createRowElement(t.name, t.count, t.cat);
-    });
+    fetch('equipos.txt?' + new Date().getTime()) // Evita la caché de GitHub Pages
+      .then(response => {
+        if (!response.ok) throw new Error("No se pudo cargar equipos.txt");
+        return response.text();
+      })
+      .then(text => {
+        parseAndLoadTeams(text);
+      })
+      .catch(error => {
+        console.log("Cargando equipos por defecto por error o archivo ausente:", error);
+        loadTeamsToUI(defaultTeams);
+      });
   };
 
-  function createRowElement(name = "", count = 10, cat = "P") {
+  function parseAndLoadTeams(text) {
+    let lines = text.split('\n');
+    let loadedTeams = [];
+    
+    lines.forEach(line => {
+      let parts = line.split(',');
+      if (parts.length >= 3) {
+        let name = parts[0].trim();
+        let count = parseInt(parts[1].trim()) || 10;
+        let cat = parts[2].trim().toLowerCase();
+        if (cat !== 'p' && cat !== 'm') cat = 'p';
+        if (name !== "") {
+          loadedTeams.push({ name, count, cat });
+        }
+      }
+    });
+
+    if (loadedTeams.length === 0) loadedTeams = defaultTeams;
+    loadTeamsToUI(loadedTeams);
+  }
+
+  function loadTeamsToUI(teams) {
+    const list = document.getElementById('inputs-list');
+    list.innerHTML = "";
+    teams.forEach(t => {
+      createRowElement(t.name, t.count, t.cat);
+    });
+  }
+
+  function createRowElement(name = "", count = 10, cat = "p") {
     const list = document.getElementById('inputs-list');
     let row = document.createElement('div');
     row.className = 'team-input-row';
     row.innerHTML = `
-      <input type="text" placeholder="Equipo" class="team-name" value="${name}" oninput="saveToStorage()">
-      <input type="number" placeholder="Int." class="team-count" value="${count}" min="1" oninput="saveToStorage()">
-      <select class="team-cat" onchange="saveToStorage()">
-        <option value="P" ${cat === 'P' ? 'selected' : ''}>P</option>
-        <option value="M" ${cat === 'M' ? 'selected' : ''}>M</option>
+      <input type="text" placeholder="Equipo" class="team-name" value="${name}">
+      <input type="number" placeholder="Int." class="team-count" value="${count}" min="1">
+      <select class="team-cat">
+        <option value="p" ${cat === 'p' ? 'selected' : ''}>P</option>
+        <option value="m" ${cat === 'm' ? 'selected' : ''}>M</option>
       </select>
       <button type="button" onclick="removeRow(this)">X</button>
     `;
@@ -203,37 +242,40 @@
   }
 
   function addTeamInput() {
-    createRowElement("", 10, "P");
-    saveToStorage();
+    createRowElement("", 10, "p");
   }
 
   function removeRow(btn) {
     if (document.getElementsByClassName('team-input-row').length > 1) {
       btn.parentElement.remove();
-      saveToStorage();
     } else {
       alert("Debe haber al menos un equipo.");
     }
   }
 
-  function saveToStorage() {
+  function downloadTxtFile() {
     const nameInputs = document.getElementsByClassName('team-name');
     const countInputs = document.getElementsByClassName('team-count');
     const catInputs = document.getElementsByClassName('team-cat');
     
-    let currentInputsState = [];
+    let fileContent = "";
     for (let i = 0; i < nameInputs.length; i++) {
       let name = nameInputs[i].value.trim();
-      let count = parseInt(countInputs[i].value) || 0;
-      let cat = catInputs[i].value;
-      currentInputsState.push({ name, count, cat });
+      let count = countInputs[i].value;
+      let cat = catInputs[i].value.toLowerCase();
+      if (name !== "") {
+        fileContent += `${name}, ${count}, ${cat}\n`;
+      }
     }
-    localStorage.setItem('campamento_teams_v2', JSON.stringify(currentInputsState));
+
+    let blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+    let link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "equipos.txt";
+    link.click();
   }
 
   function startApp() {
-    saveToStorage();
-    
     const nameInputs = document.getElementsByClassName('team-name');
     const countInputs = document.getElementsByClassName('team-count');
     const catInputs = document.getElementsByClassName('team-cat');
@@ -242,7 +284,7 @@
     for (let i = 0; i < nameInputs.length; i++) {
       let name = nameInputs[i].value.trim();
       let count = parseInt(countInputs[i].value);
-      let cat = catInputs[i].value;
+      let cat = catInputs[i].value.toUpperCase();
       if (name !== "" && !isNaN(count)) {
         teamsData.push({ name, leftCount: count, initialLeft: count, rightCount: 0, cat, id: i });
       }
