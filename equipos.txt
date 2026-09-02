@@ -3,8 +3,13 @@ BÉLGICA, 9, p
 ITALIA, 9, p
 JAPÓN, 7, p
 SUIZA, 9, p
-ALEMANIA, 8, m
+ALEMANIA, 8, p
 EEUU, 7, m
 FRANCIA, 8, m
 INGLATERRA, 7, m
 PAÍSES BAJOS, 7, m
+RUSIA, 8, m
+CANADÁ, 7, m
+AUSTRALIA, 9, m
+CHINA, 10, m
+MÉXICO, 9, m
