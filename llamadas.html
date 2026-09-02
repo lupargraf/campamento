@@ -69,7 +69,7 @@
       border-radius: 20px;
       padding: 10px 24px;
       cursor: pointer;
-      margin: 10px 0;
+      margin: 10px 5px;
     }
     .button:active, .action-btn:active {
       transform: scale(0.85);
@@ -146,12 +146,15 @@
   <button class="action-btn" type="button" onclick="addTeamInput()" style="background-color: #007BFF; font-size: 12px; padding: 6px 10px; margin-top: 5px;">+ Añadir equipo</button>
   <button class="action-btn" type="button" onclick="downloadTxtFile()" style="background-color: #28a745; font-size: 12px; padding: 6px 10px; margin-top: 5px; float: right;">Descargar equipos.txt</button>
   <br style="clear: both;">
-  <button class="action-btn" type="button" onclick="startApp()" style="width: 100%; margin-top: 10px;">Comenzar</button>
+  <button id="start-btn" class="action-btn" type="button" onclick="startApp()" style="width: 100%; margin-top: 10px;">Comenzar</button>
 </div>
 
 <div id="game-container" class="hidden">
   <table id="game-table"></table>
-  <button class="button" onclick="showResults()">FINAL</button>
+  <div style="margin-top: 10px;">
+    <button class="button" onclick="goToSetup()" style="background-color: #007BFF;">EQUIPOS</button>
+    <button class="button" onclick="showResults()">FINAL</button>
+  </div>
 </div>
 
 <div id="results" class="hidden" style="padding: 10px; background: #fff; max-width: 450px; margin: 0 auto;">
@@ -170,6 +173,7 @@
 
 <script>
   let teamsData = [];
+  let gameStarted = false;
   const colores = ["#FF5733", "#33FF57", "#3357FF", "#F3FF33", "#FF33F3", "#33FFF3", "#FFA533", "#A533FF", "#FF3366", "#33FFA5"];
   
   const defaultTeams = [
@@ -282,22 +286,50 @@
     const countInputs = document.getElementsByClassName('team-count');
     const catInputs = document.getElementsByClassName('team-cat');
     
-    teamsData = [];
+    let newTeamsData = [];
     for (let i = 0; i < nameInputs.length; i++) {
       let name = nameInputs[i].value.trim();
       let count = parseInt(countInputs[i].value);
       let cat = catInputs[i].value.toUpperCase();
       if (name !== "" && !isNaN(count)) {
-        teamsData.push({ name, leftCount: count, initialLeft: count, rightCount: 0, cat, id: i });
+        // Buscar si ya existía el equipo para preservar sus contadores actuales
+        let existing = teamsData.find(t => t.id === i || t.name === name);
+        if (existing) {
+          newTeamsData.push({
+            name,
+            leftCount: existing.leftCount,
+            initialLeft: existing.initialLeft,
+            rightCount: existing.rightCount,
+            cat,
+            id: i
+          });
+        } else {
+          newTeamsData.push({
+            name,
+            leftCount: count,
+            initialLeft: count,
+            rightCount: 0,
+            cat,
+            id: i
+          });
+        }
       }
     }
 
-    if (teamsData.length === 0) return alert("Introduce al menos un equipo válido.");
+    if (newTeamsData.length === 0) return alert("Introduce al menos un equipo válido.");
+    teamsData = newTeamsData;
+    gameStarted = true;
 
     renderGameTables();
     document.getElementById('setup-container').classList.add('hidden');
     document.getElementById('results').classList.add('hidden');
     document.getElementById('game-container').classList.remove('hidden');
+  }
+
+  function goToSetup() {
+    document.getElementById('game-container').classList.add('hidden');
+    document.getElementById('setup-container').classList.remove('hidden');
+    document.getElementById('start-btn').textContent = "Continuar";
   }
 
   function renderGameTables() {
@@ -308,7 +340,6 @@
     let mayores = teamsData.filter(t => t.cat === 'M');
     let sortedTeams = [...pequenos, ...mayores];
     
-    // Calcular las filas reales teniendo en cuenta que cada categoría empieza en una nueva fila
     let rowsP = Math.ceil(pequenos.length / 3);
     let rowsM = Math.ceil(mayores.length / 3);
     if (pequenos.length === 0) rowsP = 0;
@@ -316,7 +347,6 @@
     let totalRows = rowsP + rowsM;
     if (totalRows === 0) totalRows = 1;
 
-    // Ajustar el alto proporcional de las celdas para que encajen en el alto de la pantalla sin scroll
     let vhPerCell = Math.max(14, Math.floor(78 / totalRows));
     gameTable.style.setProperty('--cell-height', vhPerCell + 'vh');
 
