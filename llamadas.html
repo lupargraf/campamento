@@ -69,7 +69,7 @@
       border-radius: 20px;
       padding: 10px 24px;
       cursor: pointer;
-      margin: 15px 0;
+      margin: 10px 0;
     }
     .button:active, .action-btn:active {
       transform: scale(0.85);
@@ -308,10 +308,16 @@
     let mayores = teamsData.filter(t => t.cat === 'M');
     let sortedTeams = [...pequenos, ...mayores];
     
-    // Calcular el número total de filas necesarias (3 equipos por fila)
-    let totalRows = Math.ceil(sortedTeams.length / 3);
-    // Ajustar dinámicamente el alto según el número de filas para ocupar toda la pantalla
-    let vhPerCell = Math.max(16, Math.floor(82 / totalRows));
+    // Calcular las filas reales teniendo en cuenta que cada categoría empieza en una nueva fila
+    let rowsP = Math.ceil(pequenos.length / 3);
+    let rowsM = Math.ceil(mayores.length / 3);
+    if (pequenos.length === 0) rowsP = 0;
+    if (mayores.length === 0) rowsM = 0;
+    let totalRows = rowsP + rowsM;
+    if (totalRows === 0) totalRows = 1;
+
+    // Ajustar el alto proporcional de las celdas para que encajen en el alto de la pantalla sin scroll
+    let vhPerCell = Math.max(14, Math.floor(78 / totalRows));
     gameTable.style.setProperty('--cell-height', vhPerCell + 'vh');
 
     let currentRow;
