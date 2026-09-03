@@ -1,6 +1,10 @@
-Pérez Martínez, 8, p
-López González, 6, p
-Suárez Ramírez, 5, p
-Rodríguez Benítez, 9, p
-Lara González, 6, p
-Muñoz Galera, 4, p
+AUSTRIA, 7, p
+BÉLGICA, 9, p
+ITALIA, 8, p
+JAPÓN, 7, p
+SUIZA, 9, p
+ALEMANIA, 10, m
+EEUU, 7, m
+FRANCIA, 8, m
+INGLATERRA, 8, m
+PAÍSES BAJOS, 7, m
