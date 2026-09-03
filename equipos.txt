@@ -1,12 +1,6 @@
-AUSTRIA, 7, p
-BÉLGICA, 9, p
-ITALIA, 9, p
-JAPÓN, 7, p
-SUIZA, 9, p
-DINAMARCA, 7, p
-ALEMANIA, 8, m
-EEUU, 7, m
-FRANCIA, 8, m
-INGLATERRA, 7, m
-PAÍSES BAJOS, 7, m
-RUSIA, 8, m
+Pérez Martínez, 8, p
+López González, 6, p
+Suárez Ramírez, 5, p
+Rodríguez Benítez, 9, p
+Lara González, 6, p
+Muñoz Galera, 4, p
