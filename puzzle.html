@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Enigma del puzzle</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #080c14;
+            color: #f8fafc;
+            touch-action: manipulation;
+        }
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+        .puzzle-tile {
+            transition: transform 0.18s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.15s ease;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .puzzle-tile:active {
+            scale: 0.98;
+        }
+        /* Custom smooth appearance for victory screen */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-between items-center p-2 sm:p-4 overflow-hidden select-none bg-slate-950">
+
+    <!-- Header Section -->
+    <header class="w-full text-center py-2 flex-shrink-0">
+        <h1 class="title-font text-4xl sm:text-6xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-600 drop-shadow-[0_2px_15px_rgba(251,191,36,0.4)]">
+            ENIGMA DEL PUZZLE
+        </h1>
+
+        <!-- Team / Family Name Input Form -->
+        <div id="team-input-container" class="mt-3 max-w-sm mx-auto px-4">
+            <form onsubmit="handleTeamSubmit(event)" class="flex flex-col items-center gap-2">
+                <label for="team-input" class="text-xs sm:text-sm font-bold text-amber-300 uppercase tracking-widest">
+                    FAMILIA
+                </label>
+                <div class="flex w-full gap-2 justify-center items-center">
+                    <input 
+                        type="text" 
+                        id="team-input" 
+                        placeholder="Apellidos de la familia" 
+                        required 
+                        class="w-full px-3 py-2 bg-slate-900 border border-amber-500/40 rounded-xl text-amber-100 text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/30 text-center font-semibold placeholder:text-slate-500"
+                    />
+                    <button 
+                        type="submit" 
+                        class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-sm rounded-xl shadow-lg transition active:scale-95 cursor-pointer whitespace-nowrap"
+                    >
+                        Comenzar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </header>
+
+    <!-- Main Responsive Game Area (hidden until team name is accepted) -->
+    <main id="game-container" class="w-full max-w-lg flex-col items-center justify-center flex-grow my-auto px-1 sm:px-3 hidden">
+        
+        <!-- Controls & Score Bar -->
+        <div class="w-full flex justify-between items-center mb-2 px-2 text-xs sm:text-sm text-slate-300 font-semibold flex-shrink-0">
+            <div class="flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
+                <span id="display-team-name" class="text-amber-400 font-bold max-w-[130px] sm:max-w-[180px] truncate">Familia -</span>
+                <span class="text-slate-700">|</span>
+                <span class="text-slate-400">Movs:</span>
+                <span id="move-counter" class="text-amber-400 text-base font-bold">0</span>
+            </div>
+            <button id="shuffle-btn" onclick="shufflePuzzle()" class="px-4 py-1.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold rounded-lg shadow-lg transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reiniciar
+            </button>
+        </div>
+
+        <!-- Puzzle Board Container -->
+        <div class="relative w-full aspect-square max-h-[62vh] sm:max-h-[460px] bg-slate-900 p-2 sm:p-2.5 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] border-2 border-amber-500/30 flex items-center justify-center">
+            
+            <div id="board" class="w-full h-full grid grid-cols-4 grid-rows-4 gap-1 sm:gap-1.5 relative bg-slate-950 rounded-xl overflow-hidden p-1">
+                <!-- Tiles dynamically generated via JS -->
+            </div>
+
+            <!-- Victory Overlay displaying complete image -->
+            <div id="victory-modal" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-3 text-center rounded-2xl hidden z-30 fade-in border-2 border-amber-400/60 shadow-2xl">
+                
+                <!-- Team Name Display Above Solution -->
+                <div id="victory-team-display" class="text-amber-300 text-base sm:text-xl font-black title-font mb-0.5 tracking-wider uppercase drop-shadow-[0_2px_8px_rgba(251,191,36,0.3)]">
+                    FAMILIA -
+                </div>
+
+                <div class="text-amber-400 text-sm sm:text-base font-extrabold title-font mb-1 flex items-center gap-1.5">
+                    <span>🏆</span> ¡ENIGMA RESUELTO! <span>🏆</span>
+                </div>
+                
+                <!-- Complete Image Display -->
+                <div class="w-full max-w-[250px] sm:max-w-[290px] aspect-square rounded-xl overflow-hidden border-2 border-amber-400 shadow-xl mb-1.5">
+                    <img id="full-image" src="https://lupargraf.github.io/campamento/puzzle/puzzle.jpg" alt="Imagen Completa Puzzle" class="w-full h-full object-cover">
+                </div>
+
+                <p class="text-xs sm:text-sm text-slate-300 mb-1.5 font-medium">
+                    Resuelto en <span id="final-moves" class="font-bold text-amber-400 text-base">0</span> movimientos.
+                </p>
+
+                <div class="bg-amber-500/10 border border-amber-500/30 p-2 rounded-xl text-[11px] sm:text-xs text-amber-200 mb-2 max-w-xs font-medium">
+                    📱 Recuerda hacer pantallazo y enviarlo por whatsapp al jefe de juego.
+                </div>
+
+                <button onclick="shufflePuzzle()" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg transition active:scale-95 cursor-pointer">
+                    Jugar de nuevo
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer / Explanatory Text -->
+    <header class="w-full max-w-lg text-center py-2 px-2 flex-shrink-0">
+        <p class="text-xs sm:text-sm text-amber-300/90 font-semibold leading-tight sm:leading-normal bg-slate-900/90 py-2.5 px-3.5 rounded-xl border border-amber-500/20 shadow-lg">
+            Cuando alguien lo tenga completo, hacer pantallazo y enviarlo por whatsapp al jefe de juego.
+        </p>
+    </header>
+
+    <script>
+        // Exact piece URLs mapped from 1 to 16
+        const TILE_IMAGES = {
+            1: "https://lupargraf.github.io/campamento/puzzle/puzzle-01.jpg",
+            2: "https://lupargraf.github.io/campamento/puzzle/puzzle-02.jpg",
+            3: "https://lupargraf.github.io/campamento/puzzle/puzzle-03.jpg",
+            4: "https://lupargraf.github.io/campamento/puzzle/puzzle-04.jpg",
+            5: "https://lupargraf.github.io/campamento/puzzle/puzzle-05.jpg",
+            6: "https://lupargraf.github.io/campamento/puzzle/puzzle-06.jpg",
+            7: "https://lupargraf.github.io/campamento/puzzle/puzzle-07.jpg",
+            8: "https://lupargraf.github.io/campamento/puzzle/puzzle-08.jpg",
+            9: "https://lupargraf.github.io/campamento/puzzle/puzzle-09.jpg",
+            10: "https://lupargraf.github.io/campamento/puzzle/puzzle-10.jpg",
+            11: "https://lupargraf.github.io/campamento/puzzle/puzzle-11.jpg",
+            12: "https://lupargraf.github.io/campamento/puzzle/puzzle-12.jpg",
+            13: "https://lupargraf.github.io/campamento/puzzle/puzzle-13.jpg",
+            14: "https://lupargraf.github.io/campamento/puzzle/puzzle-14.jpg",
+            15: "https://lupargraf.github.io/campamento/puzzle/puzzle-15.jpg",
+            16: "https://lupargraf.github.io/campamento/puzzle/puzzle-16.jpg"
+        };
+
+        const FULL_IMAGE_URL = "https://lupargraf.github.io/campamento/puzzle/puzzle.jpg";
+
+        const BOARD_SIZE = 4;
+        const TOTAL_TILES = 16;
+
+        let boardState = [];
+        let moveCount = 0;
+        let isSolved = false;
+        let teamName = "";
+
+        // Touch tracking vars
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let activeTouchIndex = -1;
+
+        const boardElement = document.getElementById('board');
+        const moveCounterElement = document.getElementById('move-counter');
+        const victoryModal = document.getElementById('victory-modal');
+        const finalMovesElement = document.getElementById('final-moves');
+        const gameContainer = document.getElementById('game-container');
+        const teamInputContainer = document.getElementById('team-input-container');
+        const teamInput = document.getElementById('team-input');
+        const displayTeamName = document.getElementById('display-team-name');
+        const victoryTeamDisplay = document.getElementById('victory-team-display');
+
+        /**
+         * Handles family/team submission
+         */
+        function handleTeamSubmit(e) {
+            if (e) e.preventDefault();
+            const val = teamInput.value.trim();
+            if (!val) return;
+
+            teamName = val;
+            displayTeamName.textContent = `Familia ${teamName}`;
+            victoryTeamDisplay.textContent = `FAMILIA ${teamName}`;
+
+            teamInputContainer.classList.add('hidden');
+            gameContainer.classList.remove('hidden');
+            gameContainer.classList.add('flex');
+
+            initGame();
+        }
+
+        /**
+         * Initializes puzzle game state
+         */
+        function initGame() {
+            moveCount = 0;
+            isSolved = false;
+            victoryModal.classList.add('hidden');
+            updateMoveCounter();
+
+            boardState = generateValidScramble();
+            renderBoard();
+        }
+
+        /**
+         * Calculates total inversion count for 1D tile array
+         */
+        function countInversions(tiles) {
+            let inversions = 0;
+            for (let i = 0; i < tiles.length; i++) {
+                for (let j = i + 1; j < tiles.length; j++) {
+                    if (tiles[i] > tiles[j]) {
+                        inversions++;
+                    }
+                }
+            }
+            return inversions;
+        }
+
+        /**
+         * STREAMING_CHUNK:Guaranteeing 100% solvable puzzle permutation mathematically...
+         * Generates a 100% guaranteed solvable permutation with gap (0) placed at index 0 (top-left).
+         */
+        function generateValidScramble() {
+            let tiles = [];
+            for (let i = 1; i <= 15; i++) tiles.push(i);
+
+            // Fisher-Yates Random Shuffle
+            for (let i = tiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+            }
+
+            // Ensure it's not already solved initially
+            if (isAlreadySorted(tiles)) {
+                [tiles[0], tiles[1]] = [tiles[1], tiles[0]];
+            }
+
+            // MATHEMATICAL SOLVABILITY GUARANTEE:
+            // Since gap '0' is placed at index 0 (row 0 top -> row 4 from bottom, EVEN row),
+            // the puzzle is solvable IF AND ONLY IF the number of inversions is ODD.
+            let inversions = countInversions(tiles);
+
+            // If inversions count is EVEN, swapping any 2 adjacent elements flips the parity to ODD,
+            // making it 100% SOLVABLE instantly!
+            if (inversions % 2 === 0) {
+                [tiles[13], tiles[14]] = [tiles[14], tiles[13]];
+            }
+
+            // Return board with gap at position 0
+            return [0, ...tiles];
+        }
+
+        function isAlreadySorted(tiles) {
+            for (let i = 0; i < tiles.length; i++) {
+                if (tiles[i] !== i + 1) return false;
+            }
+            return true;
+        }
+
+        /**
+         * Renders current 4x4 grid board
+         */
+        function renderBoard() {
+            boardElement.innerHTML = '';
+
+            boardState.forEach((tileVal, currentIndex) => {
+                const tileDiv = document.createElement('div');
+                tileDiv.className = 'puzzle-tile relative rounded-lg overflow-hidden select-none bg-slate-900 border border-slate-800 shadow';
+
+                if (tileVal === 0) {
+                    // Empty tile space
+                    tileDiv.classList.add('bg-slate-950/80', 'border-2', 'border-dashed', 'border-slate-800', 'cursor-default');
+                    tileDiv.innerHTML = `<div class="w-full h-full flex items-center justify-center text-slate-800 text-xs font-bold">VACÍO</div>`;
+                } else {
+                    tileDiv.classList.add('cursor-pointer', 'hover:border-amber-400/50');
+
+                    const img = document.createElement('img');
+                    img.src = TILE_IMAGES[tileVal];
+                    img.alt = `Pieza ${tileVal}`;
+                    img.className = 'w-full h-full object-cover pointer-events-none';
+                    tileDiv.appendChild(img);
+
+                    tileDiv.addEventListener('click', () => handleTileClick(currentIndex));
+                    tileDiv.addEventListener('touchstart', (e) => handleTouchStart(e, currentIndex), { passive: true });
+                    tileDiv.addEventListener('touchend', (e) => handleTouchEnd(e, currentIndex), { passive: true });
+                }
+
+                boardElement.appendChild(tileDiv);
+            });
+        }
+
+        /**
+         * Touch events for responsive mobile gestures
+         */
+        function handleTouchStart(e, index) {
+            if (e.touches && e.touches.length > 0) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                activeTouchIndex = index;
+            }
+        }
+
+        function handleTouchEnd(e, index) {
+            if (activeTouchIndex !== index) return;
+
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+
+                if (Math.abs(diffX) > 20 || Math.abs(diffY) > 20) {
+                    const emptyIndex = boardState.indexOf(0);
+                    if (isAdjacent(index, emptyIndex)) {
+                        moveTile(index, emptyIndex);
+                        return;
+                    }
+                }
+            }
+
+            handleTileClick(index);
+        }
+
+        /**
+         * Tile movement logic
+         */
+        function handleTileClick(index) {
+            if (isSolved) return;
+
+            const emptyIndex = boardState.indexOf(0);
+            if (isAdjacent(index, emptyIndex)) {
+                moveTile(index, emptyIndex);
+            }
+        }
+
+        function moveTile(fromIndex, toEmptyIndex) {
+            boardState[toEmptyIndex] = boardState[fromIndex];
+            boardState[fromIndex] = 0;
+
+            moveCount++;
+            updateMoveCounter();
+            renderBoard();
+
+            checkVictory();
+        }
+
+        function isAdjacent(idx1, idx2) {
+            const r1 = Math.floor(idx1 / BOARD_SIZE);
+            const c1 = idx1 % BOARD_SIZE;
+            const r2 = Math.floor(idx2 / BOARD_SIZE);
+            const c2 = idx2 % BOARD_SIZE;
+
+            return (Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1);
+        }
+
+        function updateMoveCounter() {
+            moveCounterElement.textContent = moveCount;
+        }
+
+        /**
+         * Checks if board is solved (1..15 in order with empty 0 at slot 15)
+         */
+        function checkVictory() {
+            for (let i = 0; i < TOTAL_TILES - 1; i++) {
+                if (boardState[i] !== i + 1) return;
+            }
+            if (boardState[15] === 0) {
+                isSolved = true;
+                finalMovesElement.textContent = moveCount;
+                setTimeout(() => {
+                    victoryModal.classList.remove('hidden');
+                }, 200);
+            }
+        }
+
+        function shufflePuzzle() {
+            initGame();
+        }
+
+        window.onload = function() {
+            if (teamInput) teamInput.focus();
+        };
+    </script>
+</body>
+</html>
