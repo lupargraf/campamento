@@ -1,10 +1,7 @@
-AUSTRIA, 7, p
-BÉLGICA, 9, p
-ITALIA, 8, p
-JAPÓN, 7, p
-SUIZA, 9, p
-ALEMANIA, 10, m
-EEUU, 7, m
-FRANCIA, 8, m
-INGLATERRA, 8, m
-PAÍSES BAJOS, 7, m
+1ºESO-A, 7, p
+1ºESO-B, 6, p
+1ºESO-C, 6, p
+2ºESO-D, 8, p
+2ºESO-E, 7, p
+2ºESO-F, 8, p
+2ºESO-G, 8, p
