@@ -1,7 +1,7 @@
 1ºESO-A, 6, p
 1ºESO-B, 7, p
-1ºESO-C, 6, p
+1ºESO-C, 7, p
 2ºESO-D, 8, p
-2ºESO-E, 8, p
-2ºESO-F, 7, p
+2ºESO-E, 7, p
+2ºESO-F, 8, p
 2ºESO-G, 8, p
