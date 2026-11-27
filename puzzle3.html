@@ -34,6 +34,25 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
+        /* Flying piece 16 transition */
+        .flying-tile {
+            position: fixed;
+            z-index: 60;
+            pointer-events: none;
+            transition: all 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 15px 35px rgba(251, 191, 36, 0.6);
+            border: 2px solid #fbbf24;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        /* Fullscreen victory zoom animation */
+        @keyframes zoomVictory {
+            0% { opacity: 0; transform: scale(0.7); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .victory-fullscreen-anim {
+            animation: zoomVictory 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col justify-between items-center p-2 sm:p-4 overflow-hidden select-none bg-slate-950">
@@ -95,39 +114,37 @@
                 <!-- Tiles dynamically generated via JS -->
             </div>
 
-            <!-- Victory Overlay displaying complete image -->
-            <div id="victory-modal" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-3 text-center rounded-2xl hidden z-30 fade-in border-2 border-amber-400/60 shadow-2xl">
-                
-                <!-- Team Name Display Above Solution -->
-                <div id="victory-team-display" class="text-amber-300 text-base sm:text-xl font-black title-font mb-0.5 tracking-wider uppercase drop-shadow-[0_2px_8px_rgba(251,191,36,0.3)]">
-                    FAMILIA -
-                </div>
-
-                <div class="text-amber-400 text-sm sm:text-base font-extrabold title-font mb-1 flex items-center gap-1.5">
-                    <span>🏆</span> ¡ENIGMA RESUELTO! <span>🏆</span>
-                </div>
-                
-                <!-- Complete Image Display -->
-                <div class="w-full max-w-[250px] sm:max-w-[290px] aspect-square rounded-xl overflow-hidden border-2 border-amber-400 shadow-xl mb-1.5">
-                    <img id="full-image" src="https://lupargraf.github.io/campamento/puzzle/puzzle.jpg" alt="Imagen Completa Puzzle" class="w-full h-full object-cover">
-                </div>
-
-                <p class="text-xs sm:text-sm text-slate-300 mb-1.5 font-medium">
-                    Resuelto en <span id="final-moves" class="font-bold text-amber-400 text-base">0</span> movimientos.
-                </p>
-
-                <div class="bg-amber-500/10 border border-amber-500/30 p-2 rounded-xl text-[11px] sm:text-xs text-amber-200 mb-2 max-w-xs font-medium">
-                    📱 Recuerda hacer pantallazo y enviarlo por whatsapp al jefe de juego.
-                </div>
-
-                <button onclick="shufflePuzzle()" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg transition active:scale-95 cursor-pointer">
-                    Jugar de nuevo
-                </button>
-            </div>
-
         </div>
 
     </main>
+
+    <!-- Fullscreen Victory Overlay -->
+    <div id="victory-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-3 sm:p-6 text-center hidden z-50 victory-fullscreen-anim">
+        
+        <!-- Title Above Image (Exact requested text) -->
+        <h2 class="title-font text-2xl sm:text-5xl font-black text-amber-400 tracking-wider mb-3 sm:mb-4 drop-shadow-[0_2px_15px_rgba(251,191,36,0.5)]">
+            ¡¡¡PULZZLE CONSEGUIDO!!!
+        </h2>
+        
+        <!-- Maximized Complete Image Display -->
+        <div class="w-full max-w-[90vw] sm:max-w-[65vh] aspect-square rounded-2xl overflow-hidden border-4 border-amber-400 shadow-[0_0_50px_rgba(251,191,36,0.4)] mb-3 sm:mb-4 flex-shrink-1">
+            <img id="full-image" src="https://lupargraf.github.io/campamento/puzzle/puzzle.jpg" alt="Imagen Completa Puzzle" class="w-full h-full object-cover">
+        </div>
+
+        <!-- Family Name Display Below Image -->
+        <div id="victory-team-display" class="text-amber-300 text-xl sm:text-3xl font-black title-font tracking-wider uppercase drop-shadow-[0_2px_8px_rgba(251,191,36,0.3)] mb-1">
+            FAMILIA -
+        </div>
+
+        <!-- Small Parenthesized Instruction Below Family Name -->
+        <p class="text-xs sm:text-sm text-slate-300 font-medium mb-4">
+            (envía pantallazo al jefe de juego)
+        </p>
+
+        <button onclick="shufflePuzzle()" class="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm rounded-xl shadow-lg transition active:scale-95 cursor-pointer">
+            Jugar de nuevo
+        </button>
+    </div>
 
     <!-- Footer / Explanatory Text -->
     <header class="w-full max-w-lg text-center py-2 px-2 flex-shrink-0">
@@ -175,7 +192,6 @@
         const boardElement = document.getElementById('board');
         const moveCounterElement = document.getElementById('move-counter');
         const victoryModal = document.getElementById('victory-modal');
-        const finalMovesElement = document.getElementById('final-moves');
         const gameContainer = document.getElementById('game-container');
         const teamInputContainer = document.getElementById('team-input-container');
         const teamInput = document.getElementById('team-input');
@@ -230,7 +246,6 @@
         }
 
         /**
-         * STREAMING_CHUNK:Guaranteeing 100% solvable puzzle permutation mathematically...
          * Generates a 100% guaranteed solvable permutation with gap (0) placed at index 0 (top-left).
          */
         function generateValidScramble() {
@@ -380,11 +395,68 @@
             }
             if (boardState[15] === 0) {
                 isSolved = true;
-                finalMovesElement.textContent = moveCount;
+                animatePiece16AndShowVictory();
+            }
+        }
+
+        /**
+         * Animates tile 16 flying from top-left screen corner into slot 15,
+         * then opens the maximized victory overlay.
+         */
+        function animatePiece16AndShowVictory() {
+            const emptySlot = boardElement.children[15];
+            if (!emptySlot) {
+                victoryModal.classList.remove('hidden');
+                return;
+            }
+
+            const targetRect = emptySlot.getBoundingClientRect();
+
+            // Create flying tile 16 at top-left corner of screen
+            const flyingTile = document.createElement('div');
+            flyingTile.className = 'flying-tile';
+            flyingTile.style.top = '0px';
+            flyingTile.style.left = '0px';
+            flyingTile.style.width = `${targetRect.width}px`;
+            flyingTile.style.height = `${targetRect.height}px`;
+            flyingTile.style.transform = 'scale(0.4) rotate(-20deg)';
+            flyingTile.style.opacity = '0.1';
+
+            const img = document.createElement('img');
+            img.src = TILE_IMAGES[16];
+            img.alt = 'Pieza 16';
+            img.className = 'w-full h-full object-cover';
+            flyingTile.appendChild(img);
+
+            document.body.appendChild(flyingTile);
+
+            // Force reflow to trigger CSS transition smoothly
+            flyingTile.getBoundingClientRect();
+
+            // Fly to bottom-right slot (slot 15)
+            requestAnimationFrame(() => {
+                flyingTile.style.top = `${targetRect.top}px`;
+                flyingTile.style.left = `${targetRect.left}px`;
+                flyingTile.style.transform = 'scale(1) rotate(0deg)';
+                flyingTile.style.opacity = '1';
+            });
+
+            // Once landed, snap piece 16 into board and launch fullscreen victory
+            setTimeout(() => {
+                emptySlot.innerHTML = '';
+                emptySlot.className = 'puzzle-tile relative rounded-lg overflow-hidden select-none bg-slate-900 border border-amber-400 shadow';
+                const landedImg = document.createElement('img');
+                landedImg.src = TILE_IMAGES[16];
+                landedImg.className = 'w-full h-full object-cover';
+                emptySlot.appendChild(landedImg);
+
+                flyingTile.remove();
+
+                // Brief pause to appreciate the completed 4x4 grid before expanding fullscreen
                 setTimeout(() => {
                     victoryModal.classList.remove('hidden');
-                }, 200);
-            }
+                }, 450);
+            }, 1150);
         }
 
         function shufflePuzzle() {
